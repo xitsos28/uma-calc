@@ -93,49 +93,78 @@
     let searchQuery = ""; 
     let isSortMode = false; 
 
-    // 🌐 [공유 기능] 주소창에 내장된 데이터를 읽어 파일 업로드 없이 자동 연동하는 로직
-    window.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const encodedData = urlParams.get('data');
-      if (encodedData) {
-        try {
-          const decodedData = JSON.parse(decodeURIComponent(atob(encodedData)));
-          appSkills = decodedData;
-          
-          // UI 요소 연동 활성화
-          document.getElementById('search-bar-container').classList.remove('hidden');
-          document.getElementById('share-button-container').classList.remove('hidden');
-          renderPage1();
-          updateSelectedCount();
-        } catch (e) {
-          console.error("공유 링크 데이터 파싱 실패:", e);
-          alert("유효하지 않거나 손상된 공유 링크입니다.");
-        }
+// ==========================================
+// 🌐 [오류 수정] 주소창에 내장된 한글 데이터를 안전하게 읽어오는 로직
+// ==========================================
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const encodedData = urlParams.get('data');
+  if (encodedData) {
+    try {
+      // 1. 주소창에서 Base64로 오염된 문자열을 표준화
+      const binaryString = atob(encodedData.replace(/-/g, '+').replace(/_/g, '/'));
+      
+      // 2. 바이트 배열을 다시 한글(UTF-8) 문자열로 안전하게 디코딩 (I/O error 방지)
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
       }
-    });
-
-    // 🔗 [공유 기능] 현재 스킬 리스트 상태를 인코딩하여 주소창용 단축 링크 생성
-    function generateShareLink() {
-      if (appSkills.length === 0) {
-        alert("공유할 스킬 데이터가 존재하지 않습니다.");
-        return;
-      }
-      try {
-        // 현재 선택 상태 및 힌트 레벨 데이터를 보존하여 압축 인코딩
-        const jsonStr = JSON.stringify(appSkills);
-        const encoded = btoa(encodeURIComponent(jsonStr));
-        const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
-        
-        navigator.clipboard.writeText(shareUrl).then(() => {
-          alert("🎉 공유용 특수 링크가 클립보드에 복사되었습니다!\n이 링크를 커뮤니티나 카톡방에 공유하시면 유저들이 파일 업로드 없이 바로 이 스킬셋을 사용할 수 있습니다.");
-        }).catch(err => {
-          console.error("클립보드 복사 실패, 수동 복사용 주소:", shareUrl);
-          alert("링크 복사에 실패했습니다. 브라우저 보안 설정을 확인하세요.");
-        });
-      } catch (e) {
-        alert("링크 생성 중 예외 발생");
-      }
+      const jsonStr = new TextDecoder('utf-8').decode(bytes);
+      
+      // 3. JSON 데이터 파싱 및 연동
+      const decodedData = JSON.parse(jsonStr);
+      appSkills = decodedData;
+      
+      // UI 요소 연동 활성화
+      document.getElementById('search-bar-container').classList.remove('hidden');
+      document.getElementById('share-button-container').classList.remove('hidden');
+      renderPage1();
+      updateSelectedCount();
+    } catch (e) {
+      console.error("공유 링크 데이터 파싱 실패:", e);
+      alert("공유 링크 복원에 실패했습니다. 주소가 유실되었거나 데이터가 너무 깁니다.");
     }
+  }
+});
+
+// ==========================================
+// 🔗 [오류 수정] 한글 깨짐 및 I/O 에러 없는 안전한 공유 링크 생성 함수
+// ==========================================
+function generateShareLink() {
+  if (appSkills.length === 0) {
+    alert("공유할 스킬 데이터가 존재하지 않습니다.");
+    return;
+  }
+  try {
+    const jsonStr = JSON.stringify(appSkills);
+    
+    // 1. 한글 문자열을 UTF-8 바이트 배열로 안전하게 인코딩 (I/O error 핵심 해결책)
+    const bytes = new TextEncoder().encode(jsonStr);
+    let binaryString = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binaryString += String.fromCharCode(bytes[i]);
+    }
+    
+    // 2. Base64 변환 후 URL에 안전한 문자로 치환 (+ -> -, / -> _)
+    const encoded = btoa(binaryString)
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, ''); // 주소창 끝에 붙는 = 패딩 제거
+      
+    const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
+    
+    // 3. 클립보드 복사
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      alert("🎉 공유용 특수 링크가 클립보드에 복사되었습니다!\n이제 주소창 오류 없이 한글 데이터가 안전하게 전송됩니다.");
+    }).catch(err => {
+      console.error("클립보드 복사 실패, 수동 복사용 주소:", shareUrl);
+      alert("브라우저 차단으로 자동 복사가 실패했습니다. 주소창의 전체 주소를 복사해서 공유해 주세요.");
+    });
+  } catch (e) {
+    console.error("링크 생성 실패:", e);
+    alert("링크 생성 중 오류가 발생했습니다.");
+  }
+}
 
     function handleFileUpload(event) {
       const file = event.target.files[0];
