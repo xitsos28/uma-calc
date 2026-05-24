@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>우마무스메 경기장 스킬 가성비 계산기</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
   <style>
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -18,7 +19,7 @@
     <div id="page-1" class="flex-1 flex flex-col pb-4">
       <header class="bg-white p-3 shadow-sm sticky top-0 z-10 border-b border-gray-100">
         <div class="flex justify-between items-center mb-2">
-          <h1 class="text-lg font-black text-gray-800">🐎 나카야마 1200m 계산기</h1>
+          <h1 class="text-lg font-black text-gray-800">🐎 경기장 가성비 계산기</h1>
           <span id="selected-count-badge" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-black">0개 고름</span>
         </div>
 
@@ -29,7 +30,7 @@
 
         <div id="share-button-container" class="mb-2 hidden">
           <button onclick="generateShareLink()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1.5 px-3 rounded-xl shadow-sm text-xs transition-all flex justify-center items-center gap-1.5">
-            <span>🔗 현재 내가 등록한 스킬셋 공유 링크 복사하기</span>
+            <span>🔗 [DB 포함] 이 상태 그대로 전체 공유 링크 복사</span>
           </button>
         </div>
 
@@ -51,8 +52,8 @@
 
       <main id="skill-list-container" class="flex-1 p-2 space-y-1.5 overflow-y-auto no-scrollbar max-h-[calc(100vh-165px)]">
         <div id="upload-guide" class="text-center py-20 text-gray-400 text-xs">
-          <p class="text-base font-bold text-gray-600 mb-2">📥 아직 불러온 파일이 없습니다</p>
-          <p>상단의 버튼을 눌러 스킬 데이터 파일을 선택하면<br>실시간으로 목록이 나타납니다!</p>
+          <p class="text-base font-bold text-gray-600 mb-2">📥 아직 불러온 데이터가 없습니다</p>
+          <p>파일을 올리거나, 데이터가 내장된 공유 링크를 통해<br>계산기를 활성화해 주세요!</p>
         </div>
       </main>
     </div>
@@ -93,78 +94,69 @@
     let searchQuery = ""; 
     let isSortMode = false; 
 
-// ==========================================
-// 🌐 [오류 수정] 주소창에 내장된 한글 데이터를 안전하게 읽어오는 로직
-// ==========================================
-window.addEventListener('DOMContentLoaded', () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const encodedData = urlParams.get('data');
-  if (encodedData) {
-    try {
-      // 1. 주소창에서 Base64로 오염된 문자열을 표준화
-      const binaryString = atob(encodedData.replace(/-/g, '+').replace(/_/g, '/'));
+    // 🌐 [초강력 복원] 주소창에 내장된 원본 데이터(전체 구조)를 pako 디노이징 해독
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const encodedData = urlParams.get('data');
       
-      // 2. 바이트 배열을 다시 한글(UTF-8) 문자열로 안전하게 디코딩 (I/O error 방지)
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
+      if (encodedData) {
+        try {
+          // 주소창 세이프티 문자 변환 복구
+          const base64 = encodedData.replace(/-/g, '+').replace(/_/g, '/');
+          const binaryString = atob(base64);
+          
+          // 바이트 배열화
+          const charData = binaryString.split('').map(x => x.charCodeAt(0));
+          const binData = new Uint8Array(charData);
+          
+          // pako를 활용한 이진 압축 해제 (가장 안전한 원본 복원 방식)
+          const data = pako.inflate(binData, { to: 'string' });
+          const decodedData = JSON.parse(data);
+          
+          appSkills = decodedData;
+          
+          // UI 즉시 활성화
+          document.getElementById('search-bar-container').classList.remove('hidden');
+          document.getElementById('share-button-container').classList.remove('hidden');
+          renderPage1();
+          updateSelectedCount();
+        } catch (e) {
+          console.error("공유 데이터 복원 실패:", e);
+          alert("링크 복원에 실패했습니다. 데이터가 누락되었거나 형식이 맞지 않습니다.");
+        }
       }
-      const jsonStr = new TextDecoder('utf-8').decode(bytes);
-      
-      // 3. JSON 데이터 파싱 및 연동
-      const decodedData = JSON.parse(jsonStr);
-      appSkills = decodedData;
-      
-      // UI 요소 연동 활성화
-      document.getElementById('search-bar-container').classList.remove('hidden');
-      document.getElementById('share-button-container').classList.remove('hidden');
-      renderPage1();
-      updateSelectedCount();
-    } catch (e) {
-      console.error("공유 링크 데이터 파싱 실패:", e);
-      alert("공유 링크 복원에 실패했습니다. 주소가 유실되었거나 데이터가 너무 깁니다.");
-    }
-  }
-});
-
-// ==========================================
-// 🔗 [오류 수정] 한글 깨짐 및 I/O 에러 없는 안전한 공유 링크 생성 함수
-// ==========================================
-function generateShareLink() {
-  if (appSkills.length === 0) {
-    alert("공유할 스킬 데이터가 존재하지 않습니다.");
-    return;
-  }
-  try {
-    const jsonStr = JSON.stringify(appSkills);
-    
-    // 1. 한글 문자열을 UTF-8 바이트 배열로 안전하게 인코딩 (I/O error 핵심 해결책)
-    const bytes = new TextEncoder().encode(jsonStr);
-    let binaryString = '';
-    for (let i = 0; i < bytes.byteLength; i++) {
-      binaryString += String.fromCharCode(bytes[i]);
-    }
-    
-    // 2. Base64 변환 후 URL에 안전한 문자로 치환 (+ -> -, / -> _)
-    const encoded = btoa(binaryString)
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, ''); // 주소창 끝에 붙는 = 패딩 제거
-      
-    const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
-    
-    // 3. 클립보드 복사
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      alert("🎉 공유용 특수 링크가 클립보드에 복사되었습니다!\n이제 주소창 오류 없이 한글 데이터가 안전하게 전송됩니다.");
-    }).catch(err => {
-      console.error("클립보드 복사 실패, 수동 복사용 주소:", shareUrl);
-      alert("브라우저 차단으로 자동 복사가 실패했습니다. 주소창의 전체 주소를 복사해서 공유해 주세요.");
     });
-  } catch (e) {
-    console.error("링크 생성 실패:", e);
-    alert("링크 생성 중 오류가 발생했습니다.");
-  }
-}
+
+    // 🔗 [초강력 압축] 전체 스킬 핵심 사전을 통째로 바이너리 압축해 주소 생성 (I/O 에러 완전 해결)
+    function generateShareLink() {
+      if (appSkills.length === 0) {
+        alert("업로드된 스킬 데이터가 없습니다. 먼저 파일을 올려주세요.");
+        return;
+      }
+      try {
+        const jsonStr = JSON.stringify(appSkills);
+        
+        // pako 라이브러리로 전체 텍스트 용량을 바이트 단위로 극단적 압축(Deflate)
+        const binaryString = pako.deflate(jsonStr, { to: 'string' });
+        
+        // Base64 안전 문자열로 인코딩
+        const encoded = btoa(binaryString)
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_')
+          .replace(/=+$/, '');
+          
+        const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
+        
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          alert("🎉 전체 데이터가 포함된 공유 링크 복사 성공!\n\n텍스트 압축 처리가 완료되어, 다른 유저들이 파일 업로드 없이 '이 스킬 데이터 전체'를 즉시 로드할 수 있습니다.");
+        }).catch(err => {
+          alert("클립보드 차단 오류. 주소창 주소를 직접 복사하세요.");
+        });
+      } catch (e) {
+        console.error(e);
+        alert("압축 처리 중 예외가 발생했습니다.");
+      }
+    }
 
     function handleFileUpload(event) {
       const file = event.target.files[0];
@@ -174,14 +166,18 @@ function generateShareLink() {
       reader.onload = function(e) {
         const text = e.target.result;
         try {
+          let parsed = [];
           if (file.name.endsWith('.json')) {
-            processRawData(JSON.parse(text));
+            parsed = JSON.parse(text);
           } else if (file.name.endsWith('.csv')) {
-            processRawData(parseCSV(text));
+            parsed = parseCSV(text);
           }
+          processRawData(parsed);
+          
           document.getElementById('search-bar-container').classList.remove('hidden');
           document.getElementById('share-button-container').classList.remove('hidden');
           renderPage1();
+          updateSelectedCount();
         } catch(err) {
           alert("파일 파싱 실패. 형식을 확인해 주세요.");
         }
@@ -217,7 +213,7 @@ function generateShareLink() {
         let pt = parseInt(skill.pt || skill.Pt || skill.cost || skill.Cost) || 100;
         let condition = (skill.condition || skill.Condition || "조건 정보 없음").toString().trim();
 
-        // 링크 인입 유저의 기존 할당 상태 보존 처리 조율
+        // 공유 받아 들어온 유저를 위해 기존 세팅 상태 유지 처리 조율
         let hint_level = skill.hint_level !== undefined ? skill.hint_level : 0;
         let selected = skill.selected !== undefined ? skill.selected : false;
 
@@ -328,22 +324,18 @@ function generateShareLink() {
       return getDiscountedPt(skill.base_pt, skill.hint_level);
     }
 
-    // 3단계 재귀식 부모 스킬명 수집기
     function getChainParentNames(skill, nameList = []) {
       if (skill.group && skill.group !== "0" && skill.group !== "") {
         let parentName = skill.group.trim();
         if (!nameList.includes(parentName)) {
           nameList.push(parentName);
           let parentSkill = appSkills.find(s => s.name === parentName);
-          if (parentSkill) {
-            getChainParentNames(parentSkill, nameList);
-          }
+          if (parentSkill) { getChainParentNames(parentSkill, nameList); }
         }
       }
       return nameList;
     }
 
-    // 기본 체인 누적 계산기
     function getChainTotalPt(skill, visited = []) {
       let currentPt = getLivePtOfSkill(skill);
       if (visited.includes(skill.name)) return currentPt;
@@ -352,14 +344,11 @@ function generateShareLink() {
       if (skill.group && skill.group !== "0" && skill.group !== "") {
         let parentName = skill.group.trim();
         let parentSkill = appSkills.find(s => s.name === parentName);
-        if (parentSkill) {
-          return currentPt + getChainTotalPt(parentSkill, [...visited]);
-        }
+        if (parentSkill) { return currentPt + getChainTotalPt(parentSkill, [...visited]); }
       }
       return currentPt;
     }
 
-    // 가상 강제 동기화 체인 계산기 (쌍원 단독 고를 때 효율 계산용 분모)
     function getVirtualChainTotalPt(skill, targetHintLevel, visited = []) {
       let currentPt = getDiscountedPt(skill.base_pt, targetHintLevel);
       if (visited.includes(skill.name)) return currentPt;
@@ -368,9 +357,7 @@ function generateShareLink() {
       if (skill.group && skill.group !== "0" && skill.group !== "") {
         let parentName = skill.group.trim();
         let parentSkill = appSkills.find(s => s.name === parentName);
-        if (parentSkill) {
-          return currentPt + getVirtualChainTotalPt(parentSkill, targetHintLevel, [...visited]);
-        }
+        if (parentSkill) { return currentPt + getVirtualChainTotalPt(parentSkill, targetHintLevel, [...visited]); }
       }
       return currentPt;
     }
@@ -388,20 +375,16 @@ function generateShareLink() {
 
       let displayPool = [...selectedSkills];
 
-      // 2단계 순위 보기 진입 시 하위 노출 제거 명단 수집
       if (isSortMode) {
         let allHiddenNames = [];
         selectedSkills.forEach(skill => {
           const checkRarity = skill.rarity.toLowerCase();
           const isUpperSkill = checkRarity.includes('레어') || skill.name.includes('◎');
-          if (isUpperSkill) {
-            getChainParentNames(skill, allHiddenNames);
-          }
+          if (isUpperSkill) { getChainParentNames(skill, allHiddenNames); }
         });
         displayPool = selectedSkills.filter(skill => !allHiddenNames.includes(skill.name.trim()));
       }
 
-      // 데이터 가공 및 연산
       let calculationList = displayPool.map(skill => {
         let finalCostPt = getLivePtOfSkill(skill);
         let efficiencyDenominator = finalCostPt; 
@@ -512,11 +495,9 @@ function generateShareLink() {
     function openBottomSheet() {
       isSortMode = false; 
       document.getElementById('sheet-title').innerText = "🛠️ 1단계: 힌트 및 pt 사전 세팅";
-      
       const btn = document.getElementById('btn-toggle-sort');
       btn.innerHTML = "📊 최종 가성비 순위 정렬하기";
       btn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl shadow-lg flex justify-center items-center gap-2 text-xs transition-all";
-
       document.getElementById('bottom-sheet').classList.remove('translate-y-full');
       processCalculation();
     }
