@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>우마무스메 경기장 스킬 가성비 계산기</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .page-transition { transition: transform 0.3s ease-in-out; }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <div class="max-w-md mx-auto bg-white min-h-screen shadow-2xl flex flex-col relative overflow-hidden">
+    
+    <div id="page-1" class="flex-1 flex flex-col pb-4">
+      <header class="bg-white p-3 shadow-sm sticky top-0 z-10 border-b border-gray-100">
+        <div class="flex justify-between items-center mb-2">
+          <h1 class="text-lg font-black text-gray-800">🐎 나카야마 1200m 계산기</h1>
+          <span id="selected-count-badge" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-black">0개 고름</span>
+        </div>
+
+        <div class="mb-2 p-2 bg-blue-50 border border-blue-200 rounded-lg text-center">
+          <label class="block text-xs font-bold text-blue-800 mb-1">📊 보유하신 스킬 파일(JSON/CSV)을 올려주세요</label>
+          <input type="file" id="file-input" accept=".json,.csv" onchange="handleFileUpload(event)" class="block w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+        </div>
+
+        <div id="share-button-container" class="mb-2 hidden">
+          <button onclick="generateShareLink()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1.5 px-3 rounded-xl shadow-sm text-xs transition-all flex justify-center items-center gap-1.5">
+            <span>🔗 현재 내가 등록한 스킬셋 공유 링크 복사하기</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-4 gap-2 mb-2">
+          <button onclick="openBottomSheet()" class="col-span-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-xl shadow-md flex justify-between items-center text-xs transition-all">
+            <span>🛒 선택 완료! 힌트/가격 조절</span>
+            <span class="text-[10px] font-black bg-blue-800/40 px-1.5 py-0.5 rounded">다음 →</span>
+          </button>
+          <button onclick="resetAllSelections()" class="col-span-1 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 font-bold py-2 px-1 rounded-xl shadow-sm flex flex-col justify-center items-center text-[11px] transition-all">
+            <span>🔄 리셋</span>
+          </button>
+        </div>
+        
+        <div id="search-bar-container" class="relative hidden mt-1">
+          <input type="text" id="skill-search-input" oninput="handleSearchQuery(this.value)" placeholder="🔍 스킬 이름 또는 종류를 입력하세요" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-semibold">
+          <button onclick="clearSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 font-bold text-xs">✕</button>
+        </div>
+      </header>
+
+      <main id="skill-list-container" class="flex-1 p-2 space-y-1.5 overflow-y-auto no-scrollbar max-h-[calc(100vh-165px)]">
+        <div id="upload-guide" class="text-center py-20 text-gray-400 text-xs">
+          <p class="text-base font-bold text-gray-600 mb-2">📥 아직 불러온 파일이 없습니다</p>
+          <p>상단의 버튼을 눌러 스킬 데이터 파일을 선택하면<br>실시간으로 목록이 나타납니다!</p>
+        </div>
+      </main>
+    </div>
+
+    <div id="bottom-sheet" class="absolute inset-0 bg-gray-900 text-white z-20 page-transition transform translate-y-full flex flex-col">
+      
+      <div class="p-3 border-b border-gray-800 bg-gray-900 sticky top-0 z-30 space-y-2.5">
+        <div class="flex justify-between items-center">
+          <h2 id="sheet-title" class="text-base font-black text-gray-100">🛠️ 1단계: 힌트 및 pt 사전 세팅</h2>
+          <button onclick="closeBottomSheet()" class="text-gray-400 hover:text-white font-bold text-xs bg-gray-800 px-2.5 py-1 rounded-lg">← 추가 선택</button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 bg-gray-800 p-2.5 rounded-xl border border-gray-700">
+          <div>
+            <label class="block text-[10px] text-gray-400 font-bold mb-0.5">내 보유 SP 입력</label>
+            <input type="number" id="input-user-sp" value="1200" oninput="processCalculation()" class="w-full bg-gray-700 text-white font-extrabold px-2.5 py-1 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500 text-xs">
+          </div>
+          <div class="text-right flex flex-col justify-center">
+            <span class="text-[10px] text-gray-400 font-bold">배우고 남은 예상 SP</span>
+            <span id="text-remaining-sp" class="text-sm font-black text-green-400">1200 pt</span>
+          </div>
+        </div>
+
+        <div>
+          <button id="btn-toggle-sort" onclick="toggleSortMode()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl shadow-lg flex justify-center items-center gap-2 text-xs transition-all">
+            <span>📊 최종 가성비 순위 정렬하기</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="calculation-container" class="flex-1 overflow-y-auto p-3 space-y-1.5 pb-8 no-scrollbar"></div>
+    </div>
+
+  </div>
+
+  <script>
+    let appSkills = [];
+    let searchQuery = ""; 
+    let isSortMode = false; 
+
+    // 🌐 [공유 기능] 주소창에 내장된 데이터를 읽어 파일 업로드 없이 자동 연동하는 로직
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const encodedData = urlParams.get('data');
+      if (encodedData) {
+        try {
+          const decodedData = JSON.parse(decodeURIComponent(atob(encodedData)));
+          appSkills = decodedData;
+          
+          // UI 요소 연동 활성화
+          document.getElementById('search-bar-container').classList.remove('hidden');
+          document.getElementById('share-button-container').classList.remove('hidden');
+          renderPage1();
+          updateSelectedCount();
+        } catch (e) {
+          console.error("공유 링크 데이터 파싱 실패:", e);
+          alert("유효하지 않거나 손상된 공유 링크입니다.");
+        }
+      }
+    });
+
+    // 🔗 [공유 기능] 현재 스킬 리스트 상태를 인코딩하여 주소창용 단축 링크 생성
+    function generateShareLink() {
+      if (appSkills.length === 0) {
+        alert("공유할 스킬 데이터가 존재하지 않습니다.");
+        return;
+      }
+      try {
+        // 현재 선택 상태 및 힌트 레벨 데이터를 보존하여 압축 인코딩
+        const jsonStr = JSON.stringify(appSkills);
+        const encoded = btoa(encodeURIComponent(jsonStr));
+        const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
+        
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          alert("🎉 공유용 특수 링크가 클립보드에 복사되었습니다!\n이 링크를 커뮤니티나 카톡방에 공유하시면 유저들이 파일 업로드 없이 바로 이 스킬셋을 사용할 수 있습니다.");
+        }).catch(err => {
+          console.error("클립보드 복사 실패, 수동 복사용 주소:", shareUrl);
+          alert("링크 복사에 실패했습니다. 브라우저 보안 설정을 확인하세요.");
+        });
+      } catch (e) {
+        alert("링크 생성 중 예외 발생");
+      }
+    }
+
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const text = e.target.result;
+        try {
+          if (file.name.endsWith('.json')) {
+            processRawData(JSON.parse(text));
+          } else if (file.name.endsWith('.csv')) {
+            processRawData(parseCSV(text));
+          }
+          document.getElementById('search-bar-container').classList.remove('hidden');
+          document.getElementById('share-button-container').classList.remove('hidden');
+          renderPage1();
+        } catch(err) {
+          alert("파일 파싱 실패. 형식을 확인해 주세요.");
+        }
+      };
+      reader.readAsText(file, "UTF-8");
+    }
+
+    function parseCSV(csvText) {
+      const lines = csvText.split(/\r?\n/);
+      if (lines.length < 2) return [];
+      const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+      const result = [];
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const matches = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
+        const row = {};
+        headers.forEach((header, index) => {
+          let val = matches[index] ? matches[index].trim() : '';
+          row[header] = val.replace(/^"|"$/g, '');
+        });
+        result.push(row);
+      }
+      return result;
+    }
+
+    function processRawData(dataList) {
+      appSkills = dataList.map(skill => {
+        let name = (skill.name || skill.Name || "이름 없음").toString().trim();
+        let rarity = (skill.rarity || skill.Rarity || "노멀").toString().trim();
+        let group = (skill.group || skill.Group || "0").toString().trim();
+        let skillClass = (skill.class || skill.Class || "공용").toString().trim();
+        let masin = parseFloat(skill.masin || skill.Masin) || 0;
+        let pt = parseInt(skill.pt || skill.Pt || skill.cost || skill.Cost) || 100;
+        let condition = (skill.condition || skill.Condition || "조건 정보 없음").toString().trim();
+
+        // 링크 인입 유저의 기존 할당 상태 보존 처리 조율
+        let hint_level = skill.hint_level !== undefined ? skill.hint_level : 0;
+        let selected = skill.selected !== undefined ? skill.selected : false;
+
+        return {
+          name: name, rarity: rarity, group: group, class: skillClass,
+          masin: masin, base_pt: pt, pt: pt, condition: condition,
+          hint_level: hint_level, selected: selected
+        };
+      });
+      searchQuery = "";
+    }
+
+    function handleSearchQuery(val) {
+      searchQuery = val.trim().toLowerCase();
+      renderPage1();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('skill-search-input');
+      if(input) input.value = "";
+      searchQuery = "";
+      renderPage1();
+    }
+
+    function renderPage1() {
+      const container = document.getElementById('skill-list-container');
+      if (!container) return;
+      container.innerHTML = '';
+      if (appSkills.length === 0) return;
+
+      const filtered = appSkills.filter(s => {
+        if (!searchQuery) return true;
+        return s.name.toLowerCase().includes(searchQuery) || 
+               s.class.toLowerCase().includes(searchQuery) ||
+               s.rarity.toLowerCase().includes(searchQuery);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="text-center text-gray-400 py-16 text-xs">일치하는 스킬이 없습니다.</div>`;
+        return;
+      }
+
+      filtered.forEach(skill => {
+        const card = document.createElement('div');
+        card.className = skill.selected ? `bg-blue-50/90 px-3 py-1.5 rounded-lg border-2 border-blue-500 cursor-pointer text-xs` : `bg-white px-3 py-1.5 rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer text-xs`;
+        let labelColor = 'bg-orange-50 text-orange-700 border border-orange-200';
+        if(skill.class === '가속력') labelColor = 'bg-cyan-50 text-cyan-700 border border-cyan-200';
+        else if(skill.class === '고유') labelColor = 'bg-purple-50 text-purple-700 border border-purple-200';
+        else if(skill.class === '시나리오') labelColor = 'bg-pink-50 text-pink-700 border border-pink-200';
+
+        card.innerHTML = `
+          <div class="flex justify-between items-center gap-2">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="w-1.5 h-1.5 rounded-full ${skill.selected ? 'bg-blue-600' : 'bg-gray-300'}"></span>
+              <h3 class="font-extrabold ${skill.selected ? 'text-blue-900' : 'text-gray-900'} truncate">${skill.name}</h3>
+            </div>
+            <span class="px-1.5 py-0.5 text-[9px] rounded font-bold ${labelColor}">${skill.class}·${skill.rarity}</span>
+          </div>
+          <div class="flex justify-between items-center text-[10px] ${skill.selected ? 'text-blue-700/80' : 'text-gray-500'} mt-0.5 px-3">
+            <span>비용: <strong class="font-bold">${skill.base_pt} pt</strong></span>
+            <span>마신 이득: <strong class="font-bold text-gray-800">${skill.masin}</strong></span>
+          </div>
+        `;
+        card.onclick = () => { skill.selected = !skill.selected; renderPage1(); updateSelectedCount(); };
+        container.appendChild(card);
+      });
+    }
+
+    function updateSelectedCount() {
+      const count = appSkills.filter(s => s.selected).length;
+      document.getElementById('selected-count-badge').innerText = `${count}개 고름`;
+    }
+
+    function resetAllSelections() {
+      if (appSkills.length === 0) return;
+      appSkills.forEach(skill => {
+        skill.selected = false;
+        skill.hint_level = 0;
+      });
+      clearSearch();
+      updateSelectedCount();
+    }
+
+    function getDiscountedPt(basePt, hintLevel) {
+      const hintRates = { 0: 0.0, 1: 0.10, 2: 0.20, 3: 0.30, 4: 0.35, 5: 0.40 };
+      const discountRate = hintRates[hintLevel] || 0;
+      return Math.max(0, Math.floor(basePt - Math.round(basePt * discountRate)));
+    }
+
+    function toggleSortMode() {
+      const btn = document.getElementById('btn-toggle-sort');
+      const title = document.getElementById('sheet-title');
+      
+      isSortMode = !isSortMode;
+      if (isSortMode) {
+        title.innerText = "📊 2단계: 최종 가성비 순위 결과";
+        btn.innerHTML = "🔄 힌트/가격 다시 수정하기";
+        btn.className = "w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl shadow-lg flex justify-center items-center gap-2 text-xs transition-all";
+      } else {
+        title.innerText = "🛠️ 1단계: 힌트 및 pt 사전 세팅";
+        btn.innerHTML = "📊 최종 가성비 순위 정렬하기";
+        btn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl shadow-lg flex justify-center items-center gap-2 text-xs transition-all";
+      }
+      processCalculation();
+    }
+
+    function getLivePtOfSkill(skill) {
+      return getDiscountedPt(skill.base_pt, skill.hint_level);
+    }
+
+    // 3단계 재귀식 부모 스킬명 수집기
+    function getChainParentNames(skill, nameList = []) {
+      if (skill.group && skill.group !== "0" && skill.group !== "") {
+        let parentName = skill.group.trim();
+        if (!nameList.includes(parentName)) {
+          nameList.push(parentName);
+          let parentSkill = appSkills.find(s => s.name === parentName);
+          if (parentSkill) {
+            getChainParentNames(parentSkill, nameList);
+          }
+        }
+      }
+      return nameList;
+    }
+
+    // 기본 체인 누적 계산기
+    function getChainTotalPt(skill, visited = []) {
+      let currentPt = getLivePtOfSkill(skill);
+      if (visited.includes(skill.name)) return currentPt;
+      visited.push(skill.name);
+
+      if (skill.group && skill.group !== "0" && skill.group !== "") {
+        let parentName = skill.group.trim();
+        let parentSkill = appSkills.find(s => s.name === parentName);
+        if (parentSkill) {
+          return currentPt + getChainTotalPt(parentSkill, [...visited]);
+        }
+      }
+      return currentPt;
+    }
+
+    // 가상 강제 동기화 체인 계산기 (쌍원 단독 고를 때 효율 계산용 분모)
+    function getVirtualChainTotalPt(skill, targetHintLevel, visited = []) {
+      let currentPt = getDiscountedPt(skill.base_pt, targetHintLevel);
+      if (visited.includes(skill.name)) return currentPt;
+      visited.push(skill.name);
+
+      if (skill.group && skill.group !== "0" && skill.group !== "") {
+        let parentName = skill.group.trim();
+        let parentSkill = appSkills.find(s => s.name === parentName);
+        if (parentSkill) {
+          return currentPt + getVirtualChainTotalPt(parentSkill, targetHintLevel, [...visited]);
+        }
+      }
+      return currentPt;
+    }
+
+    function processCalculation() {
+      const container = document.getElementById('calculation-container');
+      if(!container) return;
+      container.innerHTML = '';
+
+      let selectedSkills = appSkills.filter(s => s.selected);
+      if(selectedSkills.length === 0) {
+        container.innerHTML = `<div class="text-center text-gray-400 py-16 text-xs">선택된 스킬이 없습니다.</div>`;
+        return;
+      }
+
+      let displayPool = [...selectedSkills];
+
+      // 2단계 순위 보기 진입 시 하위 노출 제거 명단 수집
+      if (isSortMode) {
+        let allHiddenNames = [];
+        selectedSkills.forEach(skill => {
+          const checkRarity = skill.rarity.toLowerCase();
+          const isUpperSkill = checkRarity.includes('레어') || skill.name.includes('◎');
+          if (isUpperSkill) {
+            getChainParentNames(skill, allHiddenNames);
+          }
+        });
+        displayPool = selectedSkills.filter(skill => !allHiddenNames.includes(skill.name.trim()));
+      }
+
+      // 데이터 가공 및 연산
+      let calculationList = displayPool.map(skill => {
+        let finalCostPt = getLivePtOfSkill(skill);
+        let efficiencyDenominator = finalCostPt; 
+        let isCombined = false;
+        let isPureSingleUpper = false; 
+
+        const checkRarity = skill.rarity.toLowerCase();
+        const isUpperSkill = checkRarity.includes('레어') || skill.name.includes('◎');
+
+        if (isSortMode && isUpperSkill && skill.group && skill.group !== "0" && skill.group.trim() !== "") {
+          let parentName = skill.group.trim();
+          let isParentSelected = selectedSkills.some(s => s.name === parentName);
+
+          if (isParentSelected) {
+            finalCostPt = getChainTotalPt(skill, []);
+            efficiencyDenominator = finalCostPt;
+            isCombined = true;
+          } else {
+            finalCostPt = getLivePtOfSkill(skill); 
+            efficiencyDenominator = getVirtualChainTotalPt(skill, skill.hint_level, []);
+            isPureSingleUpper = true;
+          }
+        }
+
+        let efficiency = efficiencyDenominator > 0 ? ((skill.masin / efficiencyDenominator) * 100) : 0;
+
+        return {
+          ...skill,
+          calculated_pt: finalCostPt,            
+          efficiency_pt: efficiencyDenominator,   
+          efficiency: efficiency,
+          isCombined: isCombined,
+          isPureSingleUpper: isPureSingleUpper
+        };
+      });
+
+      if (isSortMode) {
+        calculationList.sort((a, b) => b.efficiency - a.efficiency);
+      }
+
+      let userSpPool = parseInt(document.getElementById('input-user-sp').value) || 0;
+
+      calculationList.forEach((skill, index) => {
+        let isAffordable = userSpPool >= skill.calculated_pt;
+        if (isAffordable) userSpPool -= skill.calculated_pt;
+
+        const resultCard = document.createElement('div');
+        resultCard.className = `p-3 rounded-xl bg-gray-800 text-xs text-white mb-2 border ${isAffordable ? 'border-green-500' : 'border-red-500/50 opacity-60'}`;
+
+        let badgeHtml = '';
+        let descHtml = '';
+        if (skill.isCombined) {
+          badgeHtml = `<span class="text-[9px] bg-indigo-900 border border-indigo-700 text-indigo-300 px-1 rounded font-bold">하위 전체포함</span>`;
+          descHtml = `<p class="text-[9px] text-emerald-400/90 -mt-0.5">✔ 단원 스킬 및 하위 스킬의 실시간 합산 가격입니다.</p>`;
+        } else if (skill.isPureSingleUpper) {
+          badgeHtml = `<span class="text-[9px] bg-amber-900 border border-amber-700 text-amber-300 px-1 rounded font-bold">단원 기지급·쌍원 단독</span>`;
+          descHtml = `<p class="text-[9px] text-yellow-400/90 -mt-0.5">✔ 단원 등급 자동 동기화(Lv.${skill.hint_level}) 효율로 판정, 비용은 쌍원만 청구되었습니다.</p>`;
+        }
+
+        resultCard.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div>
+              <div class="flex items-center gap-1">
+                <span class="text-[9px] ${isSortMode ? (isAffordable ? 'bg-green-500' : 'bg-gray-600') : 'bg-gray-700 text-gray-400'} px-1 py-0.2 rounded font-black">
+                  ${isSortMode ? (index + 1) + '위' : '세팅중'}
+                </span>
+                <h4 class="font-bold text-gray-100 text-xs">${skill.name}</h4>
+                ${badgeHtml}
+              </div>
+              <p class="text-[10px] text-gray-400 mt-0.5">
+                📊 가성비 효율: <span class="text-yellow-400 font-extrabold text-sm">${skill.efficiency.toFixed(2)}</span> 
+                <span class="text-[9px] text-gray-500">(기준pt: ${skill.efficiency_pt}pt / 마신: ${skill.masin.toFixed(2)})</span>
+              </p>
+              ${descHtml}
+            </div>
+            
+            <div class="text-right shrink-0 flex items-center gap-1 bg-gray-900/80 border border-gray-700 px-2 py-1 rounded-lg">
+              <span class="font-black text-xs text-green-400">${skill.calculated_pt}</span>
+              <span class="text-[10px] text-gray-500 font-bold">pt 차감</span>
+            </div>
+          </div>
+
+          <div class="mt-2 pt-1.5 border-t border-gray-700/60 flex justify-between items-center text-[11px] ${isSortMode ? 'hidden' : ''}">
+            <span class="text-gray-400 text-[10px]">인게임 힌트 등급 (해당 스킬만 독립 할인)</span>
+            <div class="flex items-center bg-gray-700 rounded p-0.5">
+              <button onclick="adjustHint('${skill.name}', -1)" class="w-5 h-5 flex items-center justify-center rounded bg-gray-600 font-bold text-white text-xs">-</button>
+              <span class="w-10 text-center font-black text-gray-200 text-xs">Lv.${skill.hint_level}</span>
+              <button onclick="adjustHint('${skill.name}', 1)" class="w-5 h-5 flex items-center justify-center rounded bg-gray-600 font-bold text-white text-xs">+</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(resultCard);
+      });
+
+      document.getElementById('text-remaining-sp').innerText = `${userSpPool} pt`;
+    }
+
+    function adjustHint(skillName, amount) {
+      let skill = appSkills.find(s => s.name === skillName);
+      if (!skill) return;
+      let nextLevel = skill.hint_level + amount;
+      if (nextLevel >= 0 && nextLevel <= 5) {
+        skill.hint_level = nextLevel;
+        processCalculation();
+      }
+    }
+
+    function openBottomSheet() {
+      isSortMode = false; 
+      document.getElementById('sheet-title').innerText = "🛠️ 1단계: 힌트 및 pt 사전 세팅";
+      
+      const btn = document.getElementById('btn-toggle-sort');
+      btn.innerHTML = "📊 최종 가성비 순위 정렬하기";
+      btn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl shadow-lg flex justify-center items-center gap-2 text-xs transition-all";
+
+      document.getElementById('bottom-sheet').classList.remove('translate-y-full');
+      processCalculation();
+    }
+    
+    function closeBottomSheet() {
+      document.getElementById('bottom-sheet').classList.add('translate-y-full');
+      renderPage1();
+    }
+  </script>
+</body>
+</html>
