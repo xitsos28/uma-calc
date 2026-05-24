@@ -2693,7 +2693,7 @@
    "masin_pt": "",
    "condition": "リグヒ条件:1位 ~ 4位 / フェーズ:終盤以降 / 順位:4位以内 / 追い越し対象になっている時間:1秒以上 / 最終コーナー以降:-"
  }
-]/* 🔴여기에 복사한 JSON 내용을 그대로 붙여넣으세요 (예: [{...}, {...}]) 🔴 */;
+]/* 🔴여기에 복사한 JSON 내용을 그대로 붙여넣으세요 (예: [{...}, {...}]) 🔴 */ [];
 
     let appSkills = [];
     let searchQuery = ""; 
@@ -2829,7 +2829,6 @@
       return getDiscountedPt(skill.base_pt, skill.hint_level);
     }
 
-    // 체인 부모명 조회
     function getChainParentNames(skill, nameList = []) {
       if (skill.group && skill.group !== "0" && skill.group !== "") {
         let parentName = skill.group.trim();
@@ -2940,17 +2939,8 @@
         const resultCard = document.createElement('div');
         resultCard.className = `p-3 rounded-xl bg-gray-800 text-xs text-white mb-2 border ${isAffordable ? 'border-green-500' : 'border-red-500/50 opacity-60'}`;
 
-        let badgeHtml = '';
-        let descHtml = '';
-        if (skill.isCombined) {
-          badgeHtml = `<span class="text-[9px] bg-indigo-900 border border-indigo-700 text-indigo-300 px-1 rounded font-bold">하위 전체포함</span>`;
-          descHtml = `<p class="text-[9px] text-emerald-400/90 -mt-0.5">✔ 단원 스킬 및 하위 스킬의 실시간 합산 가격입니다.</p>`;
-        } else if (skill.isPureSingleUpper) {
-          badgeHtml = `<span class="text-[9px] bg-amber-900 border border-amber-700 text-amber-300 px-1 rounded font-bold">단원 기지급·쌍원 단독</span>`;
-          descHtml = `<p class="text-[9px] text-yellow-400/90 -mt-0.5">✔ 단원 등급 자동 동기화(Lv.${skill.hint_level}) 효율로 판정, 비용은 쌍원만 청구되었습니다.</p>`;
-        }
-
-        // 💡 condition(유효 조건) 데이터를 가성비 효율 바로 밑에 가독성 높게 표시하도록 추가했습니다.
+        // 🛠 1. 요구하신 대로 부모/자식 관련 부가 배지 및 하단 디테일 설명문 레이아웃을 통째로 탈거했습니다.
+        // 🛠 2. 조건문 박스에서 'truncate'(말줄임표)를 빼고 'whitespace-normal break-all'을 추가하여 무조건 줄바꿈으로 전체 노출되게 변경했습니다.
         resultCard.innerHTML = `
           <div class="flex justify-between items-center">
             <div class="min-w-0 flex-1 pr-2">
@@ -2959,16 +2949,15 @@
                   ${isSortMode ? (index + 1) + '위' : '세팅중'}
                 </span>
                 <h4 class="font-bold text-gray-100 text-xs truncate">${skill.name}</h4>
-                ${badgeHtml}
               </div>
               <p class="text-[10px] text-gray-400 mt-0.5">
                 📊 가성비 효율: <span class="text-yellow-400 font-extrabold text-sm">${skill.efficiency.toFixed(2)}</span> 
                 <span class="text-[9px] text-gray-500">(비용: ${skill.efficiency_pt}pt / 마신: ${skill.masin.toFixed(2)})</span>
               </p>
-              <p class="text-[10px] text-gray-400 bg-gray-950/40 px-1.5 py-0.5 rounded mt-1 border border-gray-700/30 italic truncate">
+              
+              <p class="text-[10px] text-gray-300 bg-gray-950/40 px-1.5 py-1 rounded mt-1.5 border border-gray-700/30 font-medium whitespace-normal break-all leading-relaxed">
                 📋 조건: ${skill.condition}
               </p>
-              ${descHtml}
             </div>
             
             <div class="text-right shrink-0 flex items-center gap-1 bg-gray-900/80 border border-gray-700 px-2 py-1 rounded-lg">
@@ -2992,6 +2981,7 @@
       document.getElementById('text-remaining-sp').innerText = `${userSpPool} pt`;
     }
 
+    // (기타 보조 함수 유지)
     function adjustHint(skillName, amount) {
       let skill = appSkills.find(s => s.name === skillName);
       if (!skill) return;
