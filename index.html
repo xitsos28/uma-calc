@@ -44,7 +44,7 @@
       </header>
 
       <main id="skill-list-container" class="flex-1 p-2 space-y-1.5 overflow-y-auto no-scrollbar max-h-[calc(100vh-165px)]">
-        </main>
+      </main>
     </div>
 
     <div id="bottom-sheet" class="absolute inset-0 bg-gray-900 text-white z-20 page-transition transform translate-y-full flex flex-col">
@@ -2699,7 +2699,6 @@
     let searchQuery = ""; 
     let isSortMode = false; 
 
-    // 페이지가 열리자마자 내장된 데이터를 자동으로 파싱 및 초기화합니다.
     window.addEventListener('DOMContentLoaded', () => {
       if (MY_JSON_DATABASE && MY_JSON_DATABASE.length > 0) {
         processRawData(MY_JSON_DATABASE);
@@ -2830,6 +2829,7 @@
       return getDiscountedPt(skill.base_pt, skill.hint_level);
     }
 
+    // 체인 부모명 조회
     function getChainParentNames(skill, nameList = []) {
       if (skill.group && skill.group !== "0" && skill.group !== "") {
         let parentName = skill.group.trim();
@@ -2950,26 +2950,30 @@
           descHtml = `<p class="text-[9px] text-yellow-400/90 -mt-0.5">✔ 단원 등급 자동 동기화(Lv.${skill.hint_level}) 효율로 판정, 비용은 쌍원만 청구되었습니다.</p>`;
         }
 
+        // 💡 condition(유효 조건) 데이터를 가성비 효율 바로 밑에 가독성 높게 표시하도록 추가했습니다.
         resultCard.innerHTML = `
           <div class="flex justify-between items-center">
-            <div>
-              <div class="flex items-center gap-1">
-                <span class="text-[9px] ${isSortMode ? (isAffordable ? 'bg-green-500' : 'bg-gray-600') : 'bg-gray-700 text-gray-400'} px-1 py-0.2 rounded font-black">
+            <div class="min-w-0 flex-1 pr-2">
+              <div class="flex items-center gap-1 flex-wrap">
+                <span class="text-[9px] ${isSortMode ? (isAffordable ? 'bg-green-500' : 'bg-gray-600') : 'bg-gray-700 text-gray-400'} px-1 py-0.2 rounded font-black shrink-0">
                   ${isSortMode ? (index + 1) + '위' : '세팅중'}
                 </span>
-                <h4 class="font-bold text-gray-100 text-xs">${skill.name}</h4>
+                <h4 class="font-bold text-gray-100 text-xs truncate">${skill.name}</h4>
                 ${badgeHtml}
               </div>
               <p class="text-[10px] text-gray-400 mt-0.5">
                 📊 가성비 효율: <span class="text-yellow-400 font-extrabold text-sm">${skill.efficiency.toFixed(2)}</span> 
-                <span class="text-[9px] text-gray-500">(기준pt: ${skill.efficiency_pt}pt / 마신: ${skill.masin.toFixed(2)})</span>
+                <span class="text-[9px] text-gray-500">(비용: ${skill.efficiency_pt}pt / 마신: ${skill.masin.toFixed(2)})</span>
+              </p>
+              <p class="text-[10px] text-gray-400 bg-gray-950/40 px-1.5 py-0.5 rounded mt-1 border border-gray-700/30 italic truncate">
+                📋 조건: ${skill.condition}
               </p>
               ${descHtml}
             </div>
             
             <div class="text-right shrink-0 flex items-center gap-1 bg-gray-900/80 border border-gray-700 px-2 py-1 rounded-lg">
               <span class="font-black text-xs text-green-400">${skill.calculated_pt}</span>
-              <span class="text-[10px] text-gray-500 font-bold">pt 차감</span>
+              <span class="text-[10px] text-gray-500 font-bold">pt</span>
             </div>
           </div>
 
