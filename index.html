@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>우마무스메 경기장 스킬 가성비 계산기</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
   <style>
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -23,15 +22,9 @@
           <span id="selected-count-badge" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-black">0개 고름</span>
         </div>
 
-        <div class="mb-2 p-2 bg-blue-50 border border-blue-200 rounded-lg text-center">
-          <label class="block text-xs font-bold text-blue-800 mb-1">📊 보유하신 스킬 파일(JSON/CSV)을 올려주세요</label>
-          <input type="file" id="file-input" accept=".json,.csv" onchange="handleFileUpload(event)" class="block w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
-        </div>
-
-        <div id="share-button-container" class="mb-2 hidden">
-          <button onclick="generateShareLink()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1.5 px-3 rounded-xl shadow-sm text-xs transition-all flex justify-center items-center gap-1.5">
-            <span>🔗 [DB 포함] 이 상태 그대로 전체 공유 링크 복사</span>
-          </button>
+        <div class="mb-2 p-2.5 bg-green-50 border border-green-200 rounded-lg text-center">
+          <p class="text-xs font-black text-green-800">✅ 나카야마 1200m 기본 스킬 데이터셋 로드 완료</p>
+          <p class="text-[10px] text-green-600 font-semibold mt-0.5">이 주소를 그대로 공유하면 다른 유저들도 똑같이 이용할 수 있습니다.</p>
         </div>
 
         <div class="grid grid-cols-4 gap-2 mb-2">
@@ -44,18 +37,14 @@
           </button>
         </div>
         
-        <div id="search-bar-container" class="relative hidden mt-1">
+        <div id="search-bar-container" class="relative mt-1">
           <input type="text" id="skill-search-input" oninput="handleSearchQuery(this.value)" placeholder="🔍 스킬 이름 또는 종류를 입력하세요" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-semibold">
           <button onclick="clearSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 font-bold text-xs">✕</button>
         </div>
       </header>
 
       <main id="skill-list-container" class="flex-1 p-2 space-y-1.5 overflow-y-auto no-scrollbar max-h-[calc(100vh-165px)]">
-        <div id="upload-guide" class="text-center py-20 text-gray-400 text-xs">
-          <p class="text-base font-bold text-gray-600 mb-2">📥 아직 불러온 데이터가 없습니다</p>
-          <p>파일을 올리거나, 데이터가 내장된 공유 링크를 통해<br>계산기를 활성화해 주세요!</p>
-        </div>
-      </main>
+        </main>
     </div>
 
     <div id="bottom-sheet" class="absolute inset-0 bg-gray-900 text-white z-20 page-transition transform translate-y-full flex flex-col">
@@ -90,118 +79,2639 @@
   </div>
 
   <script>
+    // ==========================================
+    // ⚙ 데이터베이스 하드코딩 영역
+    // ==========================================
+    const MY_JSON_DATABASE = [
+ {
+   "name": "맞부딪치기",
+   "rarity": "레어",
+   "group": "불꽃 튀기며",
+   "class": "가속력",
+   "masin": 1.96,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 作戦:先行 / レースの距離:短距離 / 対象フェーズ前半のどこか:終盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "치열한 승부",
+   "rarity": "레어",
+   "group": "정면 승부",
+   "class": "가속력",
+   "masin": 1.96,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 作戦:先行 / 対象フェーズ前半のどこか:終盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "꽃봉오리, 피어날 때",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 1.74,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "フェーズ:中盤 / 競り合い秒数:2秒以上 / コーナー:- / リグヒ条件:3位 ~ 5位 / フェーズ:終盤以降 / 最終コーナー後半:- / 順位:3位以降 / 順位割合:40%以上 / リグヒ条件:3位 ~ 5位 / フェーズ:終盤以降 / 順位:3位以降 / 順位割合:40%以上 / 最終直線:-"
+ },
+ {
+   "name": "스프린트 터보",
+   "rarity": "레어",
+   "group": "스프린트 기어",
+   "class": "가속력",
+   "masin": 1.59,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 対象フェーズのどこか:終盤"
+ },
+ {
+   "name": "스프린트 기어",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 0.93,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 対象フェーズのどこか:終盤"
+ },
+ {
+   "name": "빅토리 샷!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 1.38,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:3位 ~ 5位 / 最終コーナー後半:- / 順位:3位以降 / 順位割合:40%以上"
+ },
+ {
+   "name": "불꽃 튀기며",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 1.05,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 作戦:先行 / レースの距離:短距離 / 対象フェーズ前半のどこか:終盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "정면 승부",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 1.05,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 作戦:先行 / 対象フェーズ前半のどこか:終盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "두근대는 하트",
+   "rarity": "레어",
+   "group": "가슴의 고동",
+   "class": "속도",
+   "masin": 1,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 対象フェーズ前半のどこか:終盤 / レースの距離:マイル / 対象フェーズ前半のどこか:終盤"
+ },
+ {
+   "name": "가슴의 고동",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.43,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 対象フェーズ前半のどこか:終盤 / レースの距離:マイル / 対象フェーズ前半のどこか:終盤"
+ },
+ {
+   "name": "전광석화",
+   "rarity": "레어",
+   "group": "한달음",
+   "class": "가속력",
+   "masin": 0.97,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:6位 ~ 12位 / レースの距離:短距離 / フェーズ:終盤以降 / 順位割合:50%以下 / 追い越し状態:- / リグヒ条件:6位 ~ 12位 / レースの距離:マイル / フェーズ:終盤以降 / 順位割合:50%以下 / 追い越し状態:-"
+ },
+ {
+   "name": "비할 바 없는",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.31,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "곡선의 소믈리에",
+   "rarity": "레어",
+   "group": "코너 가속○",
+   "class": "가속력",
+   "masin": 0.8,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "全てのコーナーのどこか:-"
+ },
+ {
+   "name": "논스톱 걸",
+   "rarity": "레어",
+   "group": "뒤처지기 방지",
+   "class": "가속력",
+   "masin": 0.76,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "近くのレーン前方にウマ娘がいる秒数:1秒以上 / ラストスパート:- / 残り持久力:1%以上"
+ },
+ {
+   "name": "One True Color",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.75,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 5位 / 残り距離:350m以下 / 順位割合:20~40% / 後方バ身差:1バ身以内"
+ },
+ {
+   "name": "신속",
+   "rarity": "레어",
+   "group": "쾌속",
+   "class": "속도",
+   "masin": 0.71,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "指定距離以上のどこか:50%"
+ },
+ {
+   "name": "꼬리 솟구쳐 오르기",
+   "rarity": "레어",
+   "group": "꼬리 올리기",
+   "class": "속도",
+   "masin": 0.7,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "レース中盤のスキル発動数:3回以上"
+ },
+ {
+   "name": "영종타파",
+   "rarity": "레어",
+   "group": "어그레시브",
+   "class": "속도",
+   "masin": 0.69,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "作戦:先行 / 対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "네버 기브 업",
+   "rarity": "레어",
+   "group": "굴하지 않는 마음",
+   "class": "속도",
+   "masin": 0.67,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "対象フェーズのコーナーのどこか:中盤"
+ },
+ {
+   "name": "열혈!! 선도 어택",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.67,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:6位 ~ 12位 / フェーズ:終盤以降 / 順位割合:50%以下 / 前方バ身差:1バ身以内 / 最終コーナー以降:-"
+ },
+ {
+   "name": "날려 버려!",
+   "rarity": "레어",
+   "group": "승리를 향해",
+   "class": "속도",
+   "masin": 0.65,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 作戦:先行 / 対象フェーズのどこか:中盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "승리를 향해",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.13,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 作戦:先行 / 対象フェーズのどこか:中盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "의기충천",
+   "rarity": "레어",
+   "group": "가벼운 발걸음",
+   "class": "속도",
+   "masin": 0.64,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / レースの距離:短距離 / 対象フェーズ後半のどこか:中盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "늠름한 기개",
+   "rarity": "레어",
+   "group": "한결같이 전진",
+   "class": "속도",
+   "masin": 0.64,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 12位 / レースの距離:短距離 / 対象フェーズ後半のどこか:中盤 / 順位割合:40%以下"
+ },
+ {
+   "name": "유성광저",
+   "rarity": "레어",
+   "group": "비약의 예감",
+   "class": "속도",
+   "masin": 0.64,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 作戦:先行 / 対象フェーズ後半のどこか:中盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "플라워리☆머누버",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.64,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 5位 / 順位割合:40%以上 / 順位を上げたとき:- / 最終コーナー以降:- / リグヒ条件:6位 ~ 10位 / 順位割合:50~80% / 順位を上げたとき:- / 最終コーナー以降:-"
+ },
+ {
+   "name": "빛나는 바람",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.62,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 12位 / 走行距離:50%以降 / レース前半指定の順位以外を維持:20%以下 / リグヒ条件:2位 / 最終コーナー後半:- / 馬群内の自身がいる位置:上位50%以内 / 順位:2位 / リグヒ条件:2位 ~ 12位 / 走行距離:50%以降 / レース前半指定の順位以外を維持:20%以下 / 最終コーナー後半:- / 馬群内の自身がいる位置:上位50%以内"
+ },
+ {
+   "name": "아오하루 점화・역",
+   "rarity": "노멀",
+   "group": "",
+   "class": "시나리오",
+   "masin": 0.61,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "対象フェーズのどこか:終盤"
+ },
+ {
+   "name": "자전원인",
+   "rarity": "레어",
+   "group": "단거리 코너◎",
+   "class": "속도",
+   "masin": 0.6,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 全てのコーナーのどこか:-"
+ },
+ {
+   "name": "단거리 코너○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.26,
+   "pt": 100,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 全てのコーナーのどこか:-"
+ },
+ {
+   "name": "용신원인",
+   "rarity": "레어",
+   "group": "선행 코너◎",
+   "class": "속도",
+   "masin": 0.6,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "作戦:先行 / 全てのコーナーのどこか:-"
+ },
+ {
+   "name": "번갯불의 번뜩임",
+   "rarity": "레어",
+   "group": "바짝 붙기",
+   "class": "속도",
+   "masin": 0.55,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "リグヒ条件:7位 ~ 12位 / レースの距離:短距離 / 対象フェーズのどこか:終盤 / 順位割合:50%より下"
+ },
+ {
+   "name": "언스토퍼블",
+   "rarity": "레어",
+   "group": "공세",
+   "class": "속도",
+   "masin": 0.54,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "対象フェーズのどこか:中盤 / 作戦:先行"
+ },
+ {
+   "name": "정공법",
+   "rarity": "레어",
+   "group": "올곧은 한 걸음",
+   "class": "속도",
+   "masin": 0.54,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 対象フェーズのどこか:中盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "한달음",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 0.54,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:6位 ~ 12位 / レースの距離:短距離 / フェーズ:終盤以降 / 順位割合:50%以下 / 追い越し状態:- / リグヒ条件:6位 ~ 12位 / レースの距離:マイル / フェーズ:終盤以降 / 順位割合:50%以下 / 追い越し状態:-"
+ },
+ {
+   "name": "절묘한 타이밍",
+   "rarity": "레어",
+   "group": "중반 달인",
+   "class": "속도",
+   "masin": 0.4,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "중반 달인",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.18,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "슈팅 스타",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.5,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 8位 / フェーズ:終盤以降 / 順位:1位以降 / 順位割合:70%以上 / 順位を上げたとき:-"
+ },
+ {
+   "name": "지고의 다운힐러",
+   "rarity": "레어",
+   "group": "내리막 달인",
+   "class": "속도",
+   "masin": 0.47,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "どこかの下り坂:-"
+ },
+ {
+   "name": "내리막 달인",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.35,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "どこかの下り坂:-"
+ },
+ {
+   "name": "플랜 X",
+   "rarity": "레어",
+   "group": "선후책",
+   "class": "가속력",
+   "masin": 0.47,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / レースの距離:短距離 / 対象フェーズ後半のどこか:中盤 / 順位:2位以降 / 順位割合:50%以上"
+ },
+ {
+   "name": "시계방향의 귀신",
+   "rarity": "레어",
+   "group": "시계(우) 방향◎",
+   "class": "공용",
+   "masin": 0.46,
+   "pt": 130,
+   "masin_pt": "",
+   "condition": "周回方向:右回り"
+ },
+ {
+   "name": "시계(우) 방향○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.13,
+   "pt": 90,
+   "masin_pt": "",
+   "condition": "周回方向:右回り"
+ },
+ {
+   "name": "양호한 경기장의 귀신",
+   "rarity": "레어",
+   "group": "양호한 경기장◎",
+   "class": "공용",
+   "masin": 0.46,
+   "pt": 130,
+   "masin_pt": "",
+   "condition": "バ場状態:良"
+ },
+ {
+   "name": "얼어붙는 바람",
+   "rarity": "레어",
+   "group": "겨울 우마무스메◎",
+   "class": "공용",
+   "masin": 0.46,
+   "pt": 130,
+   "masin_pt": "",
+   "condition": "季節:冬"
+ },
+ {
+   "name": "뒤처지기 방지",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 0.44,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "近くのレーン前方にウマ娘がいる秒数:1秒以上 / ラストスパート:- / 残り持久力:1%以上"
+ },
+ {
+   "name": "선행 코너◎",
+   "rarity": "노멀",
+   "group": "선행 코너○",
+   "class": "속도",
+   "masin": 0.44,
+   "pt": 140,
+   "masin_pt": "",
+   "condition": "作戦:先行 / 全てのコーナーのどこか:-"
+ },
+ {
+   "name": "선행 코너○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.26,
+   "pt": 130,
+   "masin_pt": "",
+   "condition": "作戦:先行 / 全てのコーナーのどこか:-"
+ },
+ {
+   "name": "행복의 푸른 빛",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.43,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / レースの距離:短距離 / 対象フェーズ前半のどこか:終盤 / 順位割合:20~50% / リグヒ条件:2位 ~ 6位 / レースの距離:マイル / 対象フェーズ前半のどこか:終盤 / 順位割合:20~50% / リグヒ条件:2位 ~ 6位 / レースの距離:中距離 / 対象フェーズ前半のどこか:終盤 / 順位割合:20~50% / リグヒ条件:2位 ~ 6位 / レースの距離:長距離 / 対象フェーズ前半のどこか:終盤 / 順位割合:20~50%"
+ },
+ {
+   "name": "만반의 준비",
+   "rarity": "레어",
+   "group": "터다지기",
+   "class": "가속력",
+   "masin": 0.43,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "レース序盤のスキル発動数:3回以上"
+ },
+ {
+   "name": "터다지기",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 0.23,
+   "pt": 100,
+   "masin_pt": "",
+   "condition": "レース序盤のスキル発動数:3回以上"
+ },
+ {
+   "name": "Breezy Treat",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.42,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / レースの距離:マイル / 残り距離:349~351m / 順位割合:50%以上 / リグヒ条件:1位 ~ 6位 / 残り距離:349~351m / 順位割合:50%以上"
+ },
+ {
+   "name": "정정당당",
+   "rarity": "레어",
+   "group": "자신을 믿고",
+   "class": "속도",
+   "masin": 0.41,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "作戦:先行 / ラストスパート:- / 対象フェーズ前半のどこか:ラストスパート"
+ },
+ {
+   "name": "자신을 믿고",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.19,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "作戦:先行 / ラストスパート:- / 対象フェーズ前半のどこか:ラストスパート"
+ },
+ {
+   "name": "푹신 보들 아워",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.4,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 4位 / レースの距離:短距離 / 走行距離:45~50% / 順位割合:30%以上 / 賢さ:1200以上 / リグヒ条件:1位 ~ 4位 / レースの距離:短距離 / 走行距離:45~50% / 順位割合:30%以上"
+ },
+ {
+   "name": "맹렬격주",
+   "rarity": "레어",
+   "group": "넘쳐흐르는 투지",
+   "class": "속도",
+   "masin": 0.4,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "追い比べ:0回より多い / 作戦:逃げ / 残り距離:200m以下 / 作戦:先行 / 残り距離:200m以下"
+ },
+ {
+   "name": "우리가 달리는 여정",
+   "rarity": "레어",
+   "group": "언제까지나 건강하게",
+   "class": "시나리오",
+   "masin": 0.4,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / ラストスパート:- / 対象フェーズのどこか:ラストスパート / レースの距離:マイル / ラストスパート:- / 対象フェーズのどこか:ラストスパート"
+ },
+ {
+   "name": "어그레시브",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.4,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "作戦:先行 / 対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "스피드스터",
+   "rarity": "레어",
+   "group": "빠져나갈 준비",
+   "class": "속도",
+   "masin": 0.39,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 作戦:先行 / 最終コーナーのどこか:- / 順位割合:50%以上"
+ },
+ {
+   "name": "빠져나갈 준비",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.17,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 作戦:先行 / 最終コーナーのどこか:- / 順位割合:50%以上"
+ },
+ {
+   "name": "블레이즈 오브 프라이드",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.39,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:3位 ~ 11位 / 順位:3位以降 / 順位を上げたとき:- / 最終コーナー:-"
+ },
+ {
+   "name": "승부사",
+   "rarity": "레어",
+   "group": "모험심",
+   "class": "공용",
+   "masin": 0.38,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "人気:3番人気以内 / 他条件を満たした上での発動率:30% / 人気:4番人気以降 / 他条件を満たした上での発動率:60%"
+ },
+ {
+   "name": "모험심",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.1,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "人気:3番人気以内 / 他条件を満たした上での発動率:15% / 人気:4番人気以降 / 他条件を満たした上での発動率:30%"
+ },
+ {
+   "name": "I Never Goof Up!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.38,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "フェーズ:終盤以降 / 順位を上げたとき:-"
+ },
+ {
+   "name": "Shadow Break",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.37,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "フェーズ:中盤 / 競り合い秒数:2秒以上 / リグヒ条件:2位 ~ 9位 / 順位:2位以降 / 順位割合:75%以上 / すぐ内側にウマ娘がいる:- / 順位を上げたとき:- / 最終コーナー以降:- / リグヒ条件:2位 ~ 9位 / 順位:2位以降 / 順位割合:75%以上 / すぐ内側にウマ娘がいる:- / 順位を上げたとき:- / 最終コーナー以降:-"
+ },
+ {
+   "name": "¡Qué alegría!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.37,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 12位 / 走行距離:50~51% / 順位割合:40%以下 / レースの距離:短距離 / 他効果を発動済:- / フェーズ:ラストスパート / ラストスパート:- / レースの距離:マイル / 他効果を発動済:- / フェーズ:ラストスパート / ラストスパート:-"
+ },
+ {
+   "name": "새로운 전설을 세우는 자",
+   "rarity": "레어",
+   "group": "시대를 바꾸는 자",
+   "class": "시나리오",
+   "masin": 0.37,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "ラストスパート:- / 対象フェーズ前半のどこか:ラストスパート"
+ },
+ {
+   "name": "시대를 바꾸는 자",
+   "rarity": "노멀",
+   "group": "",
+   "class": "시나리오",
+   "masin": 0.15,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "ラストスパート:- / 対象フェーズ前半のどこか:ラストスパート"
+ },
+ {
+   "name": "기교파",
+   "rarity": "레어",
+   "group": "교묘한 스텝",
+   "class": "가속력",
+   "masin": 0.37,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "作戦:先行 / レーン移動:1レーン / 作戦:先行 / レーン移動:2レーン"
+ },
+ {
+   "name": "맹추격",
+   "rarity": "레어",
+   "group": "달려들기",
+   "class": "속도",
+   "masin": 0.37,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "作戦:先行 / 走行距離:50%以降 / 追い越し状態:- / 作戦:差し / 走行距離:50%以降 / 追い越し状態:-"
+ },
+ {
+   "name": "텐션 오르는데!",
+   "rarity": "레어",
+   "group": "페이스 업",
+   "class": "속도",
+   "masin": 0.33,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "フェーズ:中盤 / 順位を上げたとき:-"
+ },
+ {
+   "name": "여름 하늘 헐레이션",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.33,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / 走行距離:50%以降 / 順位割合:20~50% / レース場:中山レース場 / コーナー:- / リグヒ条件:2位 ~ 6位 / 走行距離:50%以降 / 順位割合:20~50% / コーナー:-"
+ },
+ {
+   "name": "벽력의 아우프헤벤",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.32,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:6位 ~ 12位 / フェーズ:終盤以降 / 順位割合:50%以下 / 最終直線:-"
+ },
+ {
+   "name": "우마무스메 마니아",
+   "rarity": "레어",
+   "group": "우마무스메 애호가",
+   "class": "속도",
+   "masin": 0.32,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "近くのウマ娘:3人以上 / 発動可能タイミング:5秒以降"
+ },
+ {
+   "name": "우마무스메 애호가",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.14,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "近くのウマ娘:3人以上 / 発動可能タイミング:5秒以降"
+ },
+ {
+   "name": "나찰, 붉은 날개로 천상에 오르리",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.32,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:6位 ~ 12位 / 走行距離:50~51% / 順位割合:50%以下 / フェーズ:終盤以降 / 他効果を発動済:- / 追い越し状態:- / 最終コーナー:-"
+ },
+ {
+   "name": "도박사",
+   "rarity": "레어",
+   "group": "수상한 작전",
+   "class": "속도",
+   "masin": 0.31,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "指定距離以上のどこか:50%"
+ },
+ {
+   "name": "수상한 작전",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.19,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "指定距離以上のどこか:50%"
+ },
+ {
+   "name": "번뜩임☆랜딩",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.31,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 3位 / 競り合い秒数:2秒以上 / 順位:3位以内 / 最終コーナー以降:-"
+ },
+ {
+   "name": "준비 완료!",
+   "rarity": "레어",
+   "group": "작전 준비",
+   "class": "공용",
+   "masin": 0.31,
+   "pt": 140,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "작전 준비",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.21,
+   "pt": 140,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "꼬리 올리기",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.3,
+   "pt": 100,
+   "masin_pt": "",
+   "condition": "レース中盤のスキル発動数:3回以上"
+ },
+ {
+   "name": "선점 승부",
+   "rarity": "레어",
+   "group": "초반 달인",
+   "class": "속도",
+   "masin": 0.3,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "対象フェーズ後半のどこか:序盤"
+ },
+ {
+   "name": "초반 달인",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.14,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "対象フェーズ後半のどこか:序盤"
+ },
+ {
+   "name": "가벼운 발걸음",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.29,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / レースの距離:短距離 / 対象フェーズ後半のどこか:中盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "비약의 예감",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.29,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 作戦:先行 / 対象フェーズ後半のどこか:中盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "아름다운 꽃소식을 알리는 바람",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.28,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / 走行距離:50%以降 / 順位割合:40~80%"
+ },
+ {
+   "name": "난연활보",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.28,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:6位 ~ 12位 / 走行距離:50%以降 / 順位割合:50%以下"
+ },
+ {
+   "name": "빛나는 바다, 눈부신 그대",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.28,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 5位 / 走行距離:50%以降 / 順位割合:40%以上"
+ },
+ {
+   "name": "바짝 붙기",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.28,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "リグヒ条件:7位 ~ 12位 / レースの距離:短距離 / 対象フェーズのどこか:終盤 / 順位割合:50%より下"
+ },
+ {
+   "name": "향상심",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.27,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 12位 / 作戦:先行 / 順位:2位以降 / トップとの差:5m以下 / 走行距離:60%以降 / フェーズ:中盤"
+ },
+ {
+   "name": "양호한 경기장◎",
+   "rarity": "노멀",
+   "group": "양호한 경기장○",
+   "class": "공용",
+   "masin": 0.27,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "バ場状態:良"
+ },
+ {
+   "name": "양호한 경기장○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.18,
+   "pt": 90,
+   "masin_pt": "",
+   "condition": "バ場状態:良"
+ },
+ {
+   "name": "대항 의식◎",
+   "rarity": "노멀",
+   "group": "대항 의식○",
+   "class": "공용",
+   "masin": 0.27,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "自分と同じ作戦の割合:40%以上"
+ },
+ {
+   "name": "하얀 번개, 보여 주꾸마!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.26,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:8位 ~ 9位 / 走行距離:50%以降 / 順位割合:70~75% / 追い越し状態:- / コーナーではない:- / リグヒ条件:2位 ~ 4位 / 走行距離:50%以降 / 順位割合:20~30% / コーナーではない:-"
+ },
+ {
+   "name": "교묘한 스텝",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 0.26,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "作戦:先行 / レーン移動:1レーン / 作戦:先行 / レーン移動:2レーン"
+ },
+ {
+   "name": "먼저 갑니다!",
+   "rarity": "레어",
+   "group": "장난은 끝이야!",
+   "class": "속도",
+   "masin": 0.2,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "近くのレーン後方にウマ娘がいる秒数:3秒以上 / 発動可能タイミング:10秒以降"
+ },
+ {
+   "name": "장난은 끝이야!",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.09,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "近くのレーン後方にウマ娘がいる秒数:3秒以上 / 発動可能タイミング:10秒以降"
+ },
+ {
+   "name": "단독◎",
+   "rarity": "노멀",
+   "group": "단독○",
+   "class": "공용",
+   "masin": 0.26,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "自分と同じ作戦がいない:-"
+ },
+ {
+   "name": "선후책",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 0.25,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / レースの距離:短距離 / 対象フェーズ後半のどこか:中盤 / 順位:2位以降 / 順位割合:50%以上"
+ },
+ {
+   "name": "존귀한 사명을 완수하기 위하여",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.25,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "馬群内の自身がいる位置:上位30%以内 / レースの距離:長距離 / ラストスパート:最速 / 最終コーナー:- / 馬群内の自身がいる位置:上位30%以内 / 最終コーナー:-"
+ },
+ {
+   "name": "빅토리아에게 바치는 무도",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.25,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 4位 / 後方バ身差:1バ身以内 / 順位:4位以内 / 最終コーナー以降:- / リグヒ条件:2位 ~ 4位 / 前方バ身差:1バ身以内 / 順位:4位以内 / 最終コーナー以降:-"
+ },
+ {
+   "name": "Celeste Oath",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.25,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / 走行距離:45~55% / 順位割合:20~50% / レースの距離:2400m以上 / リグヒ条件:2位 ~ 6位 / 走行距離:45~55% / 順位割合:20~50%"
+ },
+ {
+   "name": "Faith in the Feral",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.25,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / 走行距離:50~51% / 順位割合:40~80% / レースの距離:中距離 / リグヒ条件:5位 ~ 10位 / 走行距離:50~51% / 順位割合:40~80%"
+ },
+ {
+   "name": "애드・아스트라",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.25,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / 走行距離:50~55% / 順位割合:40~80% / レースの距離:中距離 / レース内でのスキル発動数:7回以上 / リグヒ条件:5位 ~ 10位 / 走行距離:50~55% / 順位割合:40~80%"
+ },
+ {
+   "name": "너무 존귀해서 되살아났다해!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.25,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 12位 / 近くのウマ娘:3人以上 / フェーズ:中盤 / 順位割合:40%以下 / コーナー:-"
+ },
+ {
+   "name": "Presents from X",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.25,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 5位 / レース前半指定の順位以内を維持:50%以上 / フェーズ:中盤 / 走行距離:50%以降 / 順位:2位以降 / 順位割合:40%以上"
+ },
+ {
+   "name": "오퍼레이션・Cacao",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.25,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 4位 / 順位:4位以内 / フェーズ:中盤 / 後方バ身差:3バ身以内 / コーナー:-"
+ },
+ {
+   "name": "검은 구름을 흩뜨리는, 황금의 첫 화살",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.25,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / 走行距離:40~50% / 順位割合:40~80%"
+ },
+ {
+   "name": "승리에 이르는 누적",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.25,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 走行距離:50~51% / 順位割合:50%以上"
+ },
+ {
+   "name": "레이스의 진수・속",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "시나리오",
+   "masin": 0.24,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "対象フェーズ後半のどこか:中盤"
+ },
+ {
+   "name": "공세",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.24,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "対象フェーズのどこか:中盤 / 作戦:先行"
+ },
+ {
+   "name": "올곧은 한 걸음",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.24,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 対象フェーズのどこか:中盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "한 걸음씩 앞으로",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.24,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 12位 / 対象フェーズのどこか:中盤 / 順位割合:40%以下"
+ },
+ {
+   "name": "승리의 고동",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.24,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 5位 / 順位:2~5位 / 順位割合:50%以上 / 残り距離:199~201m"
+ },
+ {
+   "name": "『I'm possible』",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.24,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 12位 / 残り距離:199~201m / トップとの差:5m以下 / 順位:2位以降 / リグヒ条件:2位 ~ 12位 / 残り距離:199~201m / トップとの差:10m以下 / 順位:2位以降"
+ },
+ {
+   "name": "Lame de vent",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.24,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "順位を上げたとき:- / 最終コーナー:- / リグヒ条件:5位 ~ 10位 / ラストスパート:- / フェーズ:ラストスパート / 順位割合:40~80% / レースの距離:短距離 / リグヒ条件:5位 ~ 10位 / ラストスパート:- / フェーズ:ラストスパート / 順位割合:40~80% / レースの距離:マイル / 順位を上げたとき:- / 最終コーナー:- / ラストスパート:- / フェーズ:ラストスパート"
+ },
+ {
+   "name": "오의・늘 여름 버닝!!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.24,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / レースの距離:短距離 / 残り距離:199~201m / 順位割合:20~50% / 終盤の追い抜き:1回以上 / リグヒ条件:2位 ~ 6位 / 残り距離:199~201m / 順位割合:20~50%"
+ },
+ {
+   "name": "레이스의 진수・체",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "시나리오",
+   "masin": 0.23,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "対象フェーズのどこか:ラストスパート / 残り持久力:2%以上 / ラストスパート:-"
+ },
+ {
+   "name": "요리의 극의",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "시나리오",
+   "masin": 0.23,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 対象フェーズのどこか:中盤 / パワー:1200以上 / レースの距離:マイル / 対象フェーズのどこか:中盤 / パワー:1200以上 / レースの距離:短距離 / 対象フェーズのどこか:中盤 / レースの距離:マイル / 対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "자전일섬",
+   "rarity": "레어",
+   "group": "단거리 직선◎",
+   "class": "속도",
+   "masin": 0.23,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 直線のどこか:-"
+ },
+ {
+   "name": "단거리 직선◎",
+   "rarity": "노멀",
+   "group": "단거리 직선○",
+   "class": "속도",
+   "masin": 0.17,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 直線のどこか:-"
+ },
+ {
+   "name": "단거리 직선○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.11,
+   "pt": 100,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 直線のどこか:-"
+ },
+ {
+   "name": "용신일섬",
+   "rarity": "레어",
+   "group": "선행 직선◎",
+   "class": "속도",
+   "masin": 0.23,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "作戦:先行 / 直線のどこか:-"
+ },
+ {
+   "name": "한줄기 질풍",
+   "rarity": "레어",
+   "group": "직선 달인",
+   "class": "속도",
+   "masin": 0.23,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "直線のどこか:-"
+ },
+ {
+   "name": "코너 달인○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.22,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "全てのコーナーのどこか:-"
+ },
+ {
+   "name": "Pride of KING",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.21,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:4位 ~ 8位 / 残り距離:199~201m / 順位:4位以降 / 順位割合:70%以上 / 自身がかかっていない状態:-"
+ },
+ {
+   "name": "아오하루 점화・속",
+   "rarity": "노멀",
+   "group": "",
+   "class": "시나리오",
+   "masin": 0.21,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "사랑과 녹아라 그저 녹아라",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.21,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / 残り距離:999~1001m / 順位割合:20~50%"
+ },
+ {
+   "name": "무이",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "속도",
+   "masin": 0.21,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 距離（ハロン）:200 ~ 400m / 前方のウマ娘:0人 / コーナーではない:- / レースの距離:短距離 / 距離（ハロン）:200 ~ 400m / 前方のウマ娘:0人"
+ },
+ {
+   "name": "Nemesis",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.21,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 9位 / 順位割合:40~75% / 追い越し状態:- / 最終コーナー以降:-"
+ },
+ {
+   "name": "연쇄반응",
+   "rarity": "레어",
+   "group": "단서",
+   "class": "지구력",
+   "masin": 0.21,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "フェーズ:中盤 / コーナーではない:-"
+ },
+ {
+   "name": "단서",
+   "rarity": "노멀",
+   "group": "",
+   "class": "지구력",
+   "masin": 0.05,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "フェーズ:中盤 / コーナーではない:-"
+ },
+ {
+   "name": "Fairy tale",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.2,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 5位 / 走行距離:50%以降 / 順位:2位以降 / 順位割合:40%以上 / 競り合い秒数:2秒以上"
+ },
+ {
+   "name": "우등생×돌진=대승리!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.2,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 3位 / 走行距離:50%以降 / 順位:3位以内 / 競り合い秒数:2秒以上"
+ },
+ {
+   "name": "벼가 곧 무르익노라",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.2,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 11位 / 走行距離:50%以降 / 順位割合:40%以下 / 追い越し対象になっている時間:2秒以上"
+ },
+ {
+   "name": "결의의 직활강",
+   "rarity": "레어",
+   "group": "직활강",
+   "class": "가속력",
+   "masin": 0.2,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "作戦:先行 / どこかの下り坂:-"
+ },
+ {
+   "name": "직활강",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 0.15,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "作戦:先行 / どこかの下り坂:-"
+ },
+ {
+   "name": "GALmem.포에버♪",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.2,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / 走行距離:40~50% / 順位割合:40~80% / やる気:絶好調 / リグヒ条件:5位 ~ 10位 / 走行距離:40~50% / 順位割合:40~80%"
+ },
+ {
+   "name": "Flowering Dreams",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.2,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 8位 / 順位:2位以降 / 順位割合:70%以上 / 残り距離:199~201m / 近くのウマ娘:3人以上 / リグヒ条件:2位 ~ 8位 / 順位:2位以降 / 順位割合:70%以上 / 残り距離:199~201m"
+ },
+ {
+   "name": "『후나바시 최강!』",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.2,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / フェーズ:中盤 / 順位割合:50%以上 / 競り合い秒数:2秒以上 / 走行距離:50%以降 / レース場:大井レース場 / 走行距離:50%以降 / レース場:川崎レース場 / 走行距離:50%以降 / レース場:船橋レース場 / リグヒ条件:1位 ~ 6位 / フェーズ:中盤 / 順位割合:50%以上 / 競り合い秒数:2秒以上 / 走行距離:50%以降"
+ },
+ {
+   "name": "Shining Runway",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.2,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / レースの距離:マイル / 順位割合:20~50% / 最終コーナー:- / リグヒ条件:2位 ~ 6位 / 順位割合:20~50% / 最終コーナー:-"
+ },
+ {
+   "name": "무이무삼인 한 줄기 길",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.2,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 距離（ハロン）:600 ~ 800m / 順位割合:50%以上"
+ },
+ {
+   "name": "많이 드셔유!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.2,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / 走行距離:45~55% / 順位割合:20~50% / 追い越し状態:- / レースの距離:マイル / リグヒ条件:2位 ~ 6位 / 走行距離:45~55% / 順位割合:20~50% / 追い越し状態:-"
+ },
+ {
+   "name": "GO! Full-send",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.2,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / フェーズ:中盤 / 順位割合:40~80% / 順位を上げたとき:- / コーナー:第3コーナー / レースの距離:2400m / 人気:3番人気以内 / リグヒ条件:5位 ~ 10位 / フェーズ:中盤 / 順位割合:40~80% / 順位を上げたとき:- / コーナー:第3コーナー"
+ },
+ {
+   "name": "바다의 가호",
+   "rarity": "노멀",
+   "group": "",
+   "class": "시나리오",
+   "masin": 0.19,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "対象フェーズ前半のどこか:序盤"
+ },
+ {
+   "name": "시계(우) 방향◎",
+   "rarity": "노멀",
+   "group": "시계(우) 방향○",
+   "class": "공용",
+   "masin": 0.19,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "周回方向:右回り"
+ },
+ {
+   "name": "겨울 우마무스메◎",
+   "rarity": "노멀",
+   "group": "겨울 우마무스메○",
+   "class": "공용",
+   "masin": 0.19,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "季節:겨울"
+ },
+ {
+   "name": "복병◎",
+   "rarity": "노멀",
+   "group": "복병○",
+   "class": "공용",
+   "masin": 0.19,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "人気:4番人気以降"
+ },
+ {
+   "name": "커넥트",
+   "rarity": "레어",
+   "group": "심퍼시",
+   "class": "공용",
+   "masin": 0.19,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "コース:芝 / 指定のスキルを持っているウマ娘がいる:シンパシー"
+ },
+ {
+   "name": "단독○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.19,
+   "pt": 90,
+   "masin_pt": "",
+   "condition": "自分と同じ作戦がいない:-"
+ },
+ {
+   "name": "들뜬 발걸음",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.19,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "作戦:先行 / 対象フェーズ後半のどこか:序盤"
+ },
+ {
+   "name": "이상으로의 winding road",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.19,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / 残り距離:600m以下 / 順位割合:40~80% / すぐ内側にウマ娘がいる:- / 順位を上げたとき:- / ラストスパート:- / フェーズ:ラストスパート"
+ },
+ {
+   "name": "강용과단, 열화의 칼",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.19,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "走行距離:40~50% / 競り合い秒数:2秒以上 / 指定距離以上のどこか:50%"
+ },
+ {
+   "name": "GET DOWN",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.19,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:4位 ~ 8位 / 順位割合:30~70% / 競り合い秒数:2秒以上 / 最終コーナー:-"
+ },
+ {
+   "name": "진심 어린 대접이다냥",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.18,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 12位 / 走行距離:50%以降 / レース前半指定の順位以外を維持:40%以下 / レースの距離:長距離 / フェーズ:終盤以降 / 最終コーナー以降:- / リグヒ条件:5位 ~ 12位 / 走行距離:50%以降 / レース前半指定の順位以外を維持:40%以下 / フェーズ:終盤以降 / 最終コーナー以降:-"
+ },
+ {
+   "name": "불벼락",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.18,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "レース中盤のスキル発動数:2回以上"
+ },
+ {
+   "name": "불굴의 정신",
+   "rarity": "레어",
+   "group": "새 출발",
+   "class": "가속력",
+   "masin": 0.18,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "リグヒ条件:6位 ~ 12位 / 作戦:先行 / 対象フェーズのどこか:中盤 / 順位割合:40%より下"
+ },
+ {
+   "name": "새 출발",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 0.12,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "リグヒ条件:6位 ~ 12位 / 作戦:先行 / 対象フェーズのどこか:中盤 / 順位割合:40%より下"
+ },
+ {
+   "name": "대항 의식○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.18,
+   "pt": 90,
+   "masin_pt": "",
+   "condition": "自分と同じ作戦の割合:40%以上"
+ },
+ {
+   "name": "선행 직선◎",
+   "rarity": "노멀",
+   "group": "선행 직선○",
+   "class": "속도",
+   "masin": 0.17,
+   "pt": 140,
+   "masin_pt": "",
+   "condition": "作戦:先行 / 直線のどこか:-"
+ },
+ {
+   "name": "선행 직선○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.11,
+   "pt": 130,
+   "masin_pt": "",
+   "condition": "作戦:先行 / 直線のどこか:-"
+ },
+ {
+   "name": "넘쳐흐르는 투지",
+   "rarity": "노멀",
+   "group": "넘쳐흐르는 투지",
+   "class": "속도",
+   "masin": 0.17,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "追い比べ:0回より多い / 作戦:逃げ / 残り距離:200m以下 / 作戦:先行 / 残り距離:200m以下"
+ },
+ {
+   "name": "레이스의 진수・지",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "시나리오",
+   "masin": 0.16,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "レース後半でのスキル発動数:2回以上"
+ },
+ {
+   "name": "직선 가속",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 0.16,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "直線のどこか:-"
+ },
+ {
+   "name": "꿈꾸는 도중",
+   "rarity": "노멀",
+   "group": "",
+   "class": "시나리오",
+   "masin": 0.16,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 8位 / 指定距離以上のどこか:50% / 順位割合:65%以上"
+ },
+ {
+   "name": "훈풍, 영원한 순간을",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.16,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:3位 ~ 6位 / フェーズ:中盤 / 順位:3位以降 / 順位割合:50%以上 / 追い越し状態:-"
+ },
+ {
+   "name": "레이스의 진수・역",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "시나리오",
+   "masin": 0.15,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "フェーズ:ラストスパート / 追い越し状態:- / ラストスパート:-"
+ },
+ {
+   "name": "쾌주로다, 쾌주로다!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.15,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 12位 / 走行距離:50%以降 / レース前半指定の順位以外を維持:40%以下 / 追い比べ:0回より多い"
+ },
+ {
+   "name": "뒷심",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.15,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "ラストスパート:- / 対象フェーズ前半のどこか:ラストスパート"
+ },
+ {
+   "name": "커팅×DRIVE!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.15,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:3位 ~ 6位 / 順位:3位以降 / 順位割合:50%以上 / 残り距離:200m以下 / 前方バ身差:1バ身以内 / リグヒ条件:3位 ~ 6位 / 順位:3位以降 / 順位割合:50%以上 / 残り距離:200m以下 / 後方バ身差:1バ身以内"
+ },
+ {
+   "name": "페이스 업",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.15,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "フェーズ:中盤 / 順位を上げたとき:-"
+ },
+ {
+   "name": "즐겨라, 매시업!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.14,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / レースの距離:マイル / 競り合い秒数:2秒以上 / 順位割合:50%以上 / フェーズ:序盤 / 発動可能タイミング:5秒以降 / リグヒ条件:1位 ~ 6位 / 競り合い秒数:2秒以上 / 順位割合:50%以上 / フェーズ:序盤 / 発動可能タイミング:5秒以降"
+ },
+ {
+   "name": "모두의 나에게!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.14,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / フェーズ:中盤以前 / 発動可能タイミング:5秒以降 / 順位割合:50%以上 / 順位を下げたとき:- / リグヒ条件:1位 ~ 6位 / フェーズ:中盤以前 / 競り合い秒数:2秒以上 / 発動可能タイミング:5秒以降 / 順位割合:50%以上 / リグヒ条件:1位 ~ 2位 / 他効果を発動済:- / 順位:2位以内 / 走行距離:50%以降 / レースの距離:長距離"
+ },
+ {
+   "name": "언제까지나 건강하게",
+   "rarity": "노멀",
+   "group": "",
+   "class": "시나리오",
+   "masin": 0.14,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / ラストスパート:- / 対象フェーズのどこか:ラストスパート / レースの距離:マイル / ラストスパート:- / 対象フェーズのどこか:ラストスパート"
+ },
+ {
+   "name": "서정, 여로의 끝에",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.14,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:7位 ~ 12位 / レースの距離:中距離 / 対象フェーズ後半のどこか:中盤 / 順位割合:50%より下 / リグヒ条件:7位 ~ 12位 / レースの距離:長距離 / 対象フェーズ後半のどこか:中盤 / 順位割合:50%より下 / リグヒ条件:7位 ~ 12位 / レースの距離:短距離 / 対象フェーズ後半のどこか:中盤 / 順位割合:50%より下 / リグヒ条件:7位 ~ 12位 / レースの距離:マイル / 対象フェーズ後半のどこか:中盤 / 順位割合:50%より下"
+ },
+ {
+   "name": "텐션 올려 푸쳐핸썹!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.14,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / レースの距離:短距離 / 対象フェーズ後半のどこか:中盤 / 順位割合:50%以上 / リグヒ条件:1位 ~ 6位 / レースの距離:マイル / 対象フェーズ後半のどこか:中盤 / 順位割合:50%以上 / リグヒ条件:1位 ~ 6位 / レースの距離:中距離 / 対象フェーズ後半のどこか:中盤 / 順位割合:50%以上 / リグヒ条件:1位 ~ 6位 / レースの距離:長距離 / 対象フェーズ後半のどこか:中盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "굴하지 않는 마음",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.13,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "対象フェーズのコーナーのどこか:中盤"
+ },
+ {
+   "name": "113전 114기",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.13,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "トップとの差:7m以上 / 最終コーナー:-"
+ },
+ {
+   "name": "심퍼시",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.13,
+   "pt": 70,
+   "masin_pt": "",
+   "condition": "同じスキルを所持:5人以上"
+ },
+ {
+   "name": "고독한 늑대",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "공용",
+   "masin": 0.13,
+   "pt": 70,
+   "masin_pt": "",
+   "condition": "同じスキルを所持:1人"
+ },
+ {
+   "name": "겨울 우마무스메○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.13,
+   "pt": 90,
+   "masin_pt": "",
+   "condition": "季節:겨울"
+ },
+ {
+   "name": "복병○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.13,
+   "pt": 90,
+   "masin_pt": "",
+   "condition": "人気:4番人気以降"
+ },
+ {
+   "name": "기라성",
+   "rarity": "노멀",
+   "group": "",
+   "class": "시나리오",
+   "masin": 0.13,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "指定距離以上のどこか:50%"
+ },
+ {
+   "name": "콘도르 맹격파",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.12,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:4位 ~ 9位 / 追い越し状態:- / 順位:4位以降 / 順位割合:75%以上 / 最終コーナー:-"
+ },
+ {
+   "name": "옵니다 오고 있습니다 오게 할 겁니다!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.12,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:3位 ~ 12位 / フェーズ:終盤以降 / 順位:3位以降 / 前方がブロックされる:-"
+ },
+ {
+   "name": "앞만 바라보며",
+   "rarity": "노멀",
+   "group": "",
+   "class": "시나리오",
+   "masin": 0.12,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "ラストスパート:- / 対象フェーズのどこか:ラストスパート"
+ },
+ {
+   "name": "운이 트여 날아오르리",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.12,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "対象フェーズ後半のどこか:中盤"
+ },
+ {
+   "name": "부푸는 꿈, 선봉의 길",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.12,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 対象フェーズ後半のどこか:中盤 / 順位割合:50%以上"
+ },
+ {
+   "name": "퐁트・드・디아망",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.12,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / 対象フェーズ後半のどこか:中盤 / 順位割合:40~80% / レースの距離:中距離 / リグヒ条件:5位 ~ 10位 / 対象フェーズ後半のどこか:中盤 / 順位割合:40~80% / レースの距離:中距離以外"
+ },
+ {
+   "name": "바깥쪽 그룹 능숙◎",
+   "rarity": "노멀",
+   "group": "바깥쪽 그룹 능숙○",
+   "class": "공용",
+   "masin": 0.11,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "枠順:6番以降"
+ },
+ {
+   "name": "바깥쪽 그룹 능숙○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.07,
+   "pt": 90,
+   "masin_pt": "",
+   "condition": "枠順:6番以降"
+ },
+ {
+   "name": "정신일도 하사불성",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.11,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:3位 ~ 11位 / 最終直線:- / 順位:3位以降 / 順位を上げたとき:-"
+ },
+ {
+   "name": "#LookatCurren",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.11,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / 走行距離:50~65% / 順位:2位以降 / 順位割合:50%以上 / 順位を上げたとき:-"
+ },
+ {
+   "name": "직선 달인",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.11,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "直線のどこか:-"
+ },
+ {
+   "name": "겁나게 귀엽네♪ 머린 다이브",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.1,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 10位 / フェーズ:中盤 / 順位:2位以降 / 順位割合:80%以上 / レース中盤のスキル発動数:2回以上"
+ },
+ {
+   "name": "유쾌하고도 굳센 힘",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.1,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / フェーズ:中盤以降 / 坂:上り坂 / 順位割合:40~80% / 坂:なし / 坂:下り坂"
+ },
+ {
+   "name": "불침함, 출항!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.1,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:7位 ~ 12位 / 走行距離:50~60% / 順位割合:50%より下"
+ },
+ {
+   "name": "잇고・이어지는×꿈・미래",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.1,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:3位 ~ 8位 / レースの距離:短距離 / 走行距離:50%以内 / 順位:3位以降 / 順位割合:70%以上 / コーナー:- / リグヒ条件:3位 ~ 8位 / レースの距離:マイル / 走行距離:50%以内 / 順位:3位以降 / 順位割合:70%以上 / コーナー:- / リグヒ条件:3位 ~ 8位 / 走行距離:50%以内 / 順位:3位以降 / 順位割合:70%以上 / コーナー:-"
+ },
+ {
+   "name": "따라간 핏줄, 싹트는 미래",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.1,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 11位 / 走行距離:49~50% / 順位割合:40~90% / 坂:上り坂 / リグヒ条件:5位 ~ 11位 / 走行距離:49~50% / 順位割合:40~90%"
+ },
+ {
+   "name": "α-star*",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.1,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "走行距離:40~50% / 馬群内の自身がいる位置:上位10%以内 / コース:ダート / 走行距離:40~50% / 馬群内の自身がいる位置:上位10%以内"
+ },
+ {
+   "name": "프레시☆팔러",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.1,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 4位 / 対象フェーズ前半のどこか:中盤 / 順位割合:30%以上"
+ },
+ {
+   "name": "Do!sirak-magic☆",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.09,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / 走行距離:50%以降 / 順位割合:50%以上 / 追い越し状態:- / 他効果を発動済:- / レースの距離:短距離 / 順位を上げたとき:- / 最終コーナー:- / 他効果を発動済:- / レースの距離:マイル / 順位を上げたとき:- / 最終コーナー:-"
+ },
+ {
+   "name": "슬립 스트림",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.09,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "近くのレーン前方にウマ娘がいる秒数:3秒以上 / 発動可能タイミング:10秒以降"
+ },
+ {
+   "name": "I'M☆FULL☆SPEED!!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.08,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 6位 / 走行距離:45~60% / 順位:2位以降 / 順位割合:50%以上 / 追い越し状態:- / レースの距離:短距離 / リグヒ条件:2位 ~ 6位 / 走行距離:45~60% / 順位:2位以降 / 順位割合:50%以上 / 追い越し状態:-"
+ },
+ {
+   "name": "땅, 팟, 뭉",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.08,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:3位 ~ 8位 / 走行距離:50%以降 / フェーズ:中盤 / 順位:3位以降 / 順位割合:70%以上"
+ },
+ {
+   "name": "꽃피는, 세계",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.08,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:4位 ~ 10位 / レースの距離:長距離 / 走行距離:50~51% / 順位割合:30~80% / リグヒ条件:4位 ~ 10位 / 走行距離:50~51% / 順位割合:30~80%"
+ },
+ {
+   "name": "열화의 세례",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.08,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 6位 / 走行距離:50%以内 / 順位割合:50%以上 / コーナー:- / リグヒ条件:1位 ~ 5位 / 他効果を発動済:- / 順位割合:40%以上 / フェーズ:終盤以降 / 最終直線:-"
+ },
+ {
+   "name": "Joy to the World",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.08,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "対象フェーズ前半:中盤 / 回復スキルを発動済:- / リグヒ条件:2位 ~ 6位 / 走行距離:45%以降 / 順位割合:20~50% / 残り距離:1000m以上 / 対象フェーズ前半:中盤 / 回復スキルを発動済:- / リグヒ条件:2位 ~ 6位 / 走行距離:45%以降 / 順位割合:20~50%"
+ },
+ {
+   "name": "푸른 불꽃",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.08,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 11位 / 走行距離:45~50% / 順位割合:40~90% / レースの距離:マイル / リグヒ条件:5位 ~ 11位 / 走行距離:45~50% / 順位割合:40~90%"
+ },
+ {
+   "name": "튀어나와요☆팝핑 셸",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.08,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "走行距離:50~51% / コース:ダート / 指定の区間以外の場所で発動:第3コーナー / 走行距離:50~51%"
+ },
+ {
+   "name": "무삼",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "속도",
+   "masin": 0.08,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 距離（ハロン）:400 ~ 600m / 前方のウマ娘:0人 / コーナーではない:- / レースの距離:短距離 / 距離（ハロン）:400 ~ 600m / 前方のウマ娘:0人"
+ },
+ {
+   "name": "KEEP IT REAL.",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.08,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / 走行距離:50%以降 / 順位割合:40~80% / 追い越し状態:-"
+ },
+ {
+   "name": "로켓 스타트",
+   "rarity": "레어",
+   "group": "급발진",
+   "class": "가속력",
+   "masin": 0.08,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 条件なし:-"
+ },
+ {
+   "name": "급발진",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 0.05,
+   "pt": 120,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 条件なし:-"
+ },
+ {
+   "name": "HOP STEP♪LOCK ON!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.07,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 / フェーズ:中盤以降 / 順位:1位 / リグヒ条件:2位 ~ 3位 / フェーズ:中盤以降 / 順位:3位以内 / 追い越し状態:-"
+ },
+ {
+   "name": "YEAH☆VIVID TIME!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.07,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 5位 / 最終直線:- / 順位割合:40%以上 / 追い越し対象になっている時間:1秒以上 / リグヒ条件:2位 ~ 5位 / 最終直線:- / 順位割合:40%以上 / 追い越し状態:-"
+ },
+ {
+   "name": "Guiding Sea",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.07,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:8位 ~ 10位 / 残り距離:799~801m / 距離の性質:根幹 / 順位割合:70~80% / リグヒ条件:6位 ~ 10位 / 残り距離:799~801m / 順位割合:50~80%"
+ },
+ {
+   "name": "영험작연 따봉 신탁",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.07,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 4位 / 対象フェーズ前半:中盤 / 追い越し状態:- / 順位割合:30%以上 / レースの距離:マイル / リグヒ条件:1位 ~ 4位 / 対象フェーズ前半:中盤 / 追い越し対象になっている時間:1秒以上 / 順位割合:30%以上 / レースの距離:マイル / リグヒ条件:2位 ~ 4位 / 対象フェーズ前半:中盤 / 追い越し状態:- / 順位割合:30%以上 / リグヒ条件:1位 ~ 4位 / 対象フェーズ前半:中盤 / 追い越し対象になっている時間:1秒以上 / 順位割合:30%以上"
+ },
+ {
+   "name": "U=ma2",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.07,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:3位 ~ 5位 / 走行距離:50%以降 / 順位:3位以降 / 順位割合:40%以上 / コーナー:-"
+ },
+ {
+   "name": "상황 파악",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "지구력",
+   "masin": 0.06,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "リグヒ条件:7位 ~ 12位 / レースの距離:短距離 / 対象フェーズのどこか:中盤 / 順位割合:50%より下"
+ },
+ {
+   "name": "정금백련",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.06,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "ラストスパート:- / フェーズ:ラストスパート / 自身がかかっていない状態:-"
+ },
+ {
+   "name": "Adventure of 564",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.04,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "指定距離以上のどこか:50%"
+ },
+ {
+   "name": "공주라면, 우승을 이 손에",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.04,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "最終直線:- / 競り合い秒数:2秒以上"
+ },
+ {
+   "name": "레이스의 진수・근",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "시나리오",
+   "masin": 0.04,
+   "pt": 150,
+   "masin_pt": "",
+   "condition": "追い比べ:0回より多い"
+ },
+ {
+   "name": "데구루루!? 파워 드라이브",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.03,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / 走行距離:50%以降 / 順位割合:40~80% / レースの距離:中距離 / コーナー:- / リグヒ条件:5位 ~ 10位 / 走行距離:50%以降 / 順位割合:40~80% / コーナー:-"
+ },
+ {
+   "name": "Ding Dong Boo",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.03,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "追い比べ:0回より多い / コース:ダート / 追い比べ:0回より多い"
+ },
+ {
+   "name": "Illuminate you",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.03,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 10位 / フェーズ:中盤 / 順位割合:40~80% / 他効果を発動済:- / スタミナ:1200以上 / フェーズ:終盤以降"
+ },
+ {
+   "name": "맑은 날◎",
+   "rarity": "노멀",
+   "group": "맑은 날○",
+   "class": "공용",
+   "masin": 0.03,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "天気:晴れ"
+ },
+ {
+   "name": "맑은 날○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.02,
+   "pt": 90,
+   "masin_pt": "",
+   "condition": "天気:晴れ"
+ },
+ {
+   "name": "집중 마크◎",
+   "rarity": "노멀",
+   "group": "집중 마크○",
+   "class": "공용",
+   "masin": 0.03,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "一番人気のウマ娘と作戦が同じ:-"
+ },
+ {
+   "name": "땅의 가호",
+   "rarity": "노멀",
+   "group": "",
+   "class": "시나리오",
+   "masin": 0.02,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "対象フェーズ後半のどこか:終盤"
+ },
+ {
+   "name": "집중 마크○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.02,
+   "pt": 90,
+   "masin_pt": "",
+   "condition": "一番人気のウマ娘と作戦が同じ:-"
+ },
+ {
+   "name": "슈퍼 럭키 세븐",
+   "rarity": "레어",
+   "group": "럭키 세븐",
+   "class": "공용",
+   "masin": 0.02,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "他条件を満たした上での発動率:50% / 枠順:7番"
+ },
+ {
+   "name": "럭키 세븐",
+   "rarity": "노멀",
+   "group": "",
+   "class": "공용",
+   "masin": 0.01,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "他条件を満たした上での発動率:50% / 枠順:7番"
+ },
+ {
+   "name": "...found you.",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.02,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:6位 ~ 10位 / フェーズ:中盤 / 順位割合:50~80% / 順位を下げたとき:- / フェーズ:終盤以降 / 最終コーナー後半:- / 追い越し状態:- / フェーズ:終盤以降 / 追い越し状態:- / 最終直線:- / フェーズ:終盤以降 / 最終コーナー後半:- / 追い越し状態:- / フェーズ:終盤以降 / 追い越し状態:- / 最終直線:-"
+ },
+ {
+   "name": "궁극의 힐 클라이머",
+   "rarity": "레어",
+   "group": "등산가",
+   "class": "가속력",
+   "masin": 0.01,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "どこかの上り坂:-"
+ },
+ {
+   "name": "CHERRY☆스크램블",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 1.74,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 3位 / 順位:3位以内 / 残り距離:399~401m"
+ },
+ {
+   "name": "풍운의 뜻",
+   "rarity": "레어",
+   "group": "향상심",
+   "class": "속도",
+   "masin": 1.33,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 12位 / 作戦:先行 / 順位:2位以降 / トップとの差:5m以下 / 走行距離:60%以降 / フェーズ:中盤"
+ },
+ {
+   "name": "영웅호걸",
+   "rarity": "레어",
+   "group": "비할 바 없는",
+   "class": "속도",
+   "masin": 0.74,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "빙글빙글 머미 트릭♡",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.51,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 4位 / 最終直線:- / 順位:4位以内 / 前方バ身差:1バ身以内"
+ },
+ {
+   "name": "호선의 프로페서",
+   "rarity": "레어",
+   "group": "코너 달인○",
+   "class": "속도",
+   "masin": 0.48,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "全てのコーナーのどこか:-"
+ },
+ {
+   "name": "코너 가속○",
+   "rarity": "노멀",
+   "group": "",
+   "class": "가속력",
+   "masin": 0.44,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "全てのコーナーのどこか:-"
+ },
+ {
+   "name": "단거리 코너◎",
+   "rarity": "노멀",
+   "group": "단거리 코너○",
+   "class": "속도",
+   "masin": 0.44,
+   "pt": 110,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 全てのコーナーのどこか:-"
+ },
+ {
+   "name": "아오하루 점화・근",
+   "rarity": "노멀",
+   "group": "",
+   "class": "시나리오",
+   "masin": 0.43,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "対象フェーズのどこか:終盤"
+ },
+ {
+   "name": "전신속공",
+   "rarity": "레어",
+   "group": "순발력",
+   "class": "속도",
+   "masin": 0.4,
+   "pt": 140,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "순발력",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.18,
+   "pt": 140,
+   "masin_pt": "",
+   "condition": "レースの距離:短距離 / 対象フェーズのどこか:中盤"
+ },
+ {
+   "name": "전심전력",
+   "rarity": "레어",
+   "group": "뒷심",
+   "class": "속도",
+   "masin": 0.32,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "ラストスパート:- / 対象フェーズ前半のどこか:ラストスパート"
+ },
+ {
+   "name": "일진광풍",
+   "rarity": "레어",
+   "group": "직선 가속",
+   "class": "가속력",
+   "masin": 0.38,
+   "pt": 170,
+   "masin_pt": "",
+   "condition": "直線のどこか:-"
+ },
+ {
+   "name": "만색찬란☆마블러스★세계",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.33,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:6位 ~ 10位 / 走行距離:40~50% / 順位割合:50~80% / 近くのウマ娘:1人以上 / 視界内の相手:4人以上 / リグヒ条件:6位 ~ 10位 / 走行距離:40~50% / 順位割合:50~80% / 近くのウマ娘:1人以上"
+ },
+ {
+   "name": "Ravissant",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.31,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 5位 / 順位割合:40%以上 / 順位を上げたとき:- / 最終コーナー以降:-"
+ },
+ {
+   "name": "쾌속",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.3,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "指定距離以上のどこか:50%"
+ },
+ {
+   "name": "한결같이 전진",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.29,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 12位 / レースの距離:短距離 / 対象フェーズ後半のどこか:中盤 / 順位割合:40%以下"
+ },
+ {
+   "name": "질풍폭주 페가수스 대시!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.25,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 11位 / 順位割合:45%以下 / 走行距離:50%以降 / 順位を上げたとき:- / リグヒ条件:1位 ~ 6位 / 残り距離:150m以下 / 順位割合:50%以上"
+ },
+ {
+   "name": "Bang☆전 미라클!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.22,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:5位 ~ 8位 / レースの距離:長距離 / 順位割合:40~70% / 最終コーナー後半:- / 人気:4番人気以降 / リグヒ条件:5位 ~ 8位 / 順位割合:40~70% / 最終コーナー後半:-"
+ },
+ {
+   "name": "좋은 데에 들어왔어!",
+   "rarity": "레어",
+   "group": "슬립 스트림",
+   "class": "속도",
+   "masin": 0.2,
+   "pt": 160,
+   "masin_pt": "",
+   "condition": "近くのレーン前方にウマ娘がいる秒数:3秒以上 / 発動可能タイミング:10秒以降"
+ },
+ {
+   "name": "Joyful Voyage!",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.2,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 5位 / トップとの差:5m以下 / 順位:2位以降 / 順位割合:40%以上 / 残り距離:199~201m / リグヒ条件:2位 ~ 5位 / 順位:2位以降 / 順位割合:40%以上 / 残り距離:199~201m"
+ },
+ {
+   "name": "달려들기",
+   "rarity": "노멀",
+   "group": "",
+   "class": "속도",
+   "masin": 0.16,
+   "pt": 180,
+   "masin_pt": "",
+   "condition": "作戦:先行 / 走行距離:50%以降 / 追い越し状態:- / 作戦:差し / 走行距離:50%以降 / 追い越し状態:-"
+ },
+ {
+   "name": "햇살의 가호",
+   "rarity": "노멀",
+   "group": "",
+   "class": "시나리오",
+   "masin": 0.11,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "フェーズ:中盤 / 競り合い秒数:2秒以上"
+ },
+ {
+   "name": "Danser le présent",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.07,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:2位 ~ 5位 / フェーズ:終盤以降 / 最終直線:- / 順位割合:20~40% / 後方バ身差:1バ身以内"
+ },
+ {
+   "name": "최강의 이름을 걸고",
+   "rarity": "노멀",
+   "group": "0",
+   "class": "고유",
+   "masin": 0.02,
+   "pt": 200,
+   "masin_pt": "",
+   "condition": "リグヒ条件:1位 ~ 4位 / フェーズ:終盤以降 / 順位:4位以内 / 追い越し対象になっている時間:1秒以上 / 最終コーナー以降:-"
+ }
+]/* 🔴여기에 복사한 JSON 내용을 그대로 붙여넣으세요 (예: [{...}, {...}]) 🔴 */;
+
     let appSkills = [];
     let searchQuery = ""; 
     let isSortMode = false; 
 
-    // 🌐 [초강력 복원] 주소창에 내장된 원본 데이터(전체 구조)를 pako 디노이징 해독
+    // 페이지가 열리자마자 내장된 데이터를 자동으로 파싱 및 초기화합니다.
     window.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const encodedData = urlParams.get('data');
-      
-      if (encodedData) {
-        try {
-          // 주소창 세이프티 문자 변환 복구
-          const base64 = encodedData.replace(/-/g, '+').replace(/_/g, '/');
-          const binaryString = atob(base64);
-          
-          // 바이트 배열화
-          const charData = binaryString.split('').map(x => x.charCodeAt(0));
-          const binData = new Uint8Array(charData);
-          
-          // pako를 활용한 이진 압축 해제 (가장 안전한 원본 복원 방식)
-          const data = pako.inflate(binData, { to: 'string' });
-          const decodedData = JSON.parse(data);
-          
-          appSkills = decodedData;
-          
-          // UI 즉시 활성화
-          document.getElementById('search-bar-container').classList.remove('hidden');
-          document.getElementById('share-button-container').classList.remove('hidden');
-          renderPage1();
-          updateSelectedCount();
-        } catch (e) {
-          console.error("공유 데이터 복원 실패:", e);
-          alert("링크 복원에 실패했습니다. 데이터가 누락되었거나 형식이 맞지 않습니다.");
-        }
+      if (MY_JSON_DATABASE && MY_JSON_DATABASE.length > 0) {
+        processRawData(MY_JSON_DATABASE);
+        renderPage1();
+        updateSelectedCount();
+      } else {
+        document.getElementById('skill-list-container').innerHTML = `
+          <div class="text-center py-20 text-red-500 text-xs font-bold">
+            ⚠ HTML 코드 내부에 JSON 데이터가 정상적으로 이식되지 않았습니다.
+          </div>`;
       }
     });
-
-    // 🔗 [초강력 압축] 전체 스킬 핵심 사전을 통째로 바이너리 압축해 주소 생성 (I/O 에러 완전 해결)
-    function generateShareLink() {
-      if (appSkills.length === 0) {
-        alert("업로드된 스킬 데이터가 없습니다. 먼저 파일을 올려주세요.");
-        return;
-      }
-      try {
-        const jsonStr = JSON.stringify(appSkills);
-        
-        // pako 라이브러리로 전체 텍스트 용량을 바이트 단위로 극단적 압축(Deflate)
-        const binaryString = pako.deflate(jsonStr, { to: 'string' });
-        
-        // Base64 안전 문자열로 인코딩
-        const encoded = btoa(binaryString)
-          .replace(/\+/g, '-')
-          .replace(/\//g, '_')
-          .replace(/=+$/, '');
-          
-        const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
-        
-        navigator.clipboard.writeText(shareUrl).then(() => {
-          alert("🎉 전체 데이터가 포함된 공유 링크 복사 성공!\n\n텍스트 압축 처리가 완료되어, 다른 유저들이 파일 업로드 없이 '이 스킬 데이터 전체'를 즉시 로드할 수 있습니다.");
-        }).catch(err => {
-          alert("클립보드 차단 오류. 주소창 주소를 직접 복사하세요.");
-        });
-      } catch (e) {
-        console.error(e);
-        alert("압축 처리 중 예외가 발생했습니다.");
-      }
-    }
-
-    function handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const text = e.target.result;
-        try {
-          let parsed = [];
-          if (file.name.endsWith('.json')) {
-            parsed = JSON.parse(text);
-          } else if (file.name.endsWith('.csv')) {
-            parsed = parseCSV(text);
-          }
-          processRawData(parsed);
-          
-          document.getElementById('search-bar-container').classList.remove('hidden');
-          document.getElementById('share-button-container').classList.remove('hidden');
-          renderPage1();
-          updateSelectedCount();
-        } catch(err) {
-          alert("파일 파싱 실패. 형식을 확인해 주세요.");
-        }
-      };
-      reader.readAsText(file, "UTF-8");
-    }
-
-    function parseCSV(csvText) {
-      const lines = csvText.split(/\r?\n/);
-      if (lines.length < 2) return [];
-      const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-      const result = [];
-      for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-        const matches = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
-        const row = {};
-        headers.forEach((header, index) => {
-          let val = matches[index] ? matches[index].trim() : '';
-          row[header] = val.replace(/^"|"$/g, '');
-        });
-        result.push(row);
-      }
-      return result;
-    }
 
     function processRawData(dataList) {
       appSkills = dataList.map(skill => {
@@ -213,14 +2723,10 @@
         let pt = parseInt(skill.pt || skill.Pt || skill.cost || skill.Cost) || 100;
         let condition = (skill.condition || skill.Condition || "조건 정보 없음").toString().trim();
 
-        // 공유 받아 들어온 유저를 위해 기존 세팅 상태 유지 처리 조율
-        let hint_level = skill.hint_level !== undefined ? skill.hint_level : 0;
-        let selected = skill.selected !== undefined ? skill.selected : false;
-
         return {
           name: name, rarity: rarity, group: group, class: skillClass,
           masin: masin, base_pt: pt, pt: pt, condition: condition,
-          hint_level: hint_level, selected: selected
+          hint_level: 0, selected: false
         };
       });
       searchQuery = "";
