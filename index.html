@@ -2969,9 +2969,9 @@
           <div class="mt-2 pt-1.5 border-t border-gray-700/60 flex justify-between items-center text-[11px] ${isSortMode ? 'hidden' : ''}">
             <span class="text-gray-400 text-[10px]">인게임 힌트 등급 (해당 스킬만 독립 할인)</span>
             <div class="flex items-center bg-gray-700 rounded p-0.5">
-              <button onclick="adjustHint(\`${skill.name}\`, -1)" class="w-5 h-5 flex items-center justify-center rounded bg-gray-600 font-bold text-white text-xs">-</button>
+              <button onclick="adjustHint('${skill.name}', -1)" class="w-5 h-5 flex items-center justify-center rounded bg-gray-600 font-bold text-white text-xs">-</button>
               <span class="w-10 text-center font-black text-gray-200 text-xs">Lv.${skill.hint_level}</span>
-              <button onclick="adjustHint(\`${skill.name}\`, -1)" class="w-5 h-5 flex items-center justify-center rounded bg-gray-600 font-bold text-white text-xs">+</button>
+              <button onclick="adjustHint('${skill.name}', 1)" class="w-5 h-5 flex items-center justify-center rounded bg-gray-600 font-bold text-white text-xs">+</button>
             </div>
           </div>
         `;
