@@ -67,6 +67,11 @@
         </div>
 
         <div>
+          <button id="btn-savant" onclick="toggleSavant()" class="w-full bg-gray-700 hover:bg-gray-600 border border-gray-600 text-gray-300 font-bold py-2 rounded-xl shadow-lg flex justify-center items-center gap-2 text-xs transition-all">
+            <span id="btn-savant-label">💼 수완가 적용하기 (비활성)</span>
+          </button>
+        </div>
+        <div>
           <button id="btn-toggle-sort" onclick="toggleSortMode()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl shadow-lg flex justify-center items-center gap-2 text-xs transition-all">
             <span>📊 최종 가성비 순위 정렬하기</span>
           </button>
@@ -2697,7 +2702,8 @@
 
     let appSkills = [];
     let searchQuery = ""; 
-    let isSortMode = false; 
+    let isSortMode = false;
+    let isSavant = false; 
 
     window.addEventListener('DOMContentLoaded', () => {
       if (MY_JSON_DATABASE && MY_JSON_DATABASE.length > 0) {
@@ -2805,7 +2811,23 @@
     function getDiscountedPt(basePt, hintLevel) {
       const hintRates = { 0: 0.0, 1: 0.10, 2: 0.20, 3: 0.30, 4: 0.35, 5: 0.40 };
       const discountRate = hintRates[hintLevel] || 0;
-      return Math.max(0, Math.floor(basePt - Math.round(basePt * discountRate)));
+      const savantBonus = isSavant ? 0.10 : 0.0;
+      const totalDiscount = Math.min(discountRate + savantBonus, 1.0);
+      return Math.max(0, Math.floor(basePt - Math.round(basePt * totalDiscount)));
+    }
+
+    function toggleSavant() {
+      isSavant = !isSavant;
+      const btn = document.getElementById('btn-savant');
+      const label = document.getElementById('btn-savant-label');
+      if (isSavant) {
+        btn.className = "w-full bg-amber-500 hover:bg-amber-600 border border-amber-400 text-white font-bold py-2 rounded-xl shadow-lg flex justify-center items-center gap-2 text-xs transition-all";
+        label.textContent = "💼 수완가 적용 중 (-10% 추가 할인) ✓";
+      } else {
+        btn.className = "w-full bg-gray-700 hover:bg-gray-600 border border-gray-600 text-gray-300 font-bold py-2 rounded-xl shadow-lg flex justify-center items-center gap-2 text-xs transition-all";
+        label.textContent = "💼 수완가 적용하기 (비활성)";
+      }
+      processCalculation();
     }
 
     function toggleSortMode() {
@@ -2969,9 +2991,9 @@
           <div class="mt-2 pt-1.5 border-t border-gray-700/60 flex justify-between items-center text-[11px] ${isSortMode ? 'hidden' : ''}">
             <span class="text-gray-400 text-[10px]">인게임 힌트 등급 (해당 스킬만 독립 할인)</span>
             <div class="flex items-center bg-gray-700 rounded p-0.5">
-              <button onclick="adjustHint('${skill.name}', -1)" class="w-5 h-5 flex items-center justify-center rounded bg-gray-600 font-bold text-white text-xs">-</button>
+              <button data-skill-name="${skill.name}" data-amount="-1" class="hint-btn w-5 h-5 flex items-center justify-center rounded bg-gray-600 font-bold text-white text-xs">-</button>
               <span class="w-10 text-center font-black text-gray-200 text-xs">Lv.${skill.hint_level}</span>
-              <button onclick="adjustHint('${skill.name}', 1)" class="w-5 h-5 flex items-center justify-center rounded bg-gray-600 font-bold text-white text-xs">+</button>
+              <button data-skill-name="${skill.name}" data-amount="1" class="hint-btn w-5 h-5 flex items-center justify-center rounded bg-gray-600 font-bold text-white text-xs">+</button>
             </div>
           </div>
         `;
@@ -2999,6 +3021,21 @@
       btn.innerHTML = "📊 최종 가성비 순위 정렬하기";
       btn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl shadow-lg flex justify-center items-center gap-2 text-xs transition-all";
       document.getElementById('bottom-sheet').classList.remove('translate-y-full');
+
+      // 이벤트 위임: hint-btn 클릭 처리 (스킬 이름에 특수문자가 있어도 안전)
+      // processCalculation()이 호출될 때마다 innerHTML이 재생성되므로 컨테이너에 한 번만 등록
+      const calcContainer = document.getElementById('calculation-container');
+      if (!calcContainer._hintListenerAttached) {
+        calcContainer.addEventListener('click', function(e) {
+          const hintBtn = e.target.closest('.hint-btn');
+          if (!hintBtn) return;
+          const skillName = hintBtn.dataset.skillName;
+          const amount = parseInt(hintBtn.dataset.amount);
+          adjustHint(skillName, amount);
+        });
+        calcContainer._hintListenerAttached = true;
+      }
+
       processCalculation();
     }
     
