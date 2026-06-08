@@ -27,12 +27,15 @@
           <p class="text-[10px] text-green-600 font-semibold mt-0.5">이 주소를 그대로 공유하면 다른 유저들도 똑같이 이용할 수 있습니다.</p>
         </div>
 
-        <div class="grid grid-cols-4 gap-2 mb-2">
-          <button onclick="openBottomSheet()" class="col-span-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-xl shadow-md flex justify-between items-center text-xs transition-all">
-            <span>🛒 선택 완료! 힌트/가격 조절</span>
-            <span class="text-[10px] font-black bg-blue-800/40 px-1.5 py-0.5 rounded">다음 →</span>
+        <div class="grid grid-cols-3 gap-1.5 mb-2">
+          <button onclick="openBottomSheet()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded-xl shadow-md flex flex-col justify-center items-center text-[10px] transition-all">
+            <span>🛒 선택 완료!</span>
+            <span class="text-[9px] font-black bg-blue-800/40 px-1 py-0.5 rounded mt-0.5">다음 →</span>
           </button>
-          <button onclick="resetAllSelections()" class="col-span-1 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 font-bold py-2 px-1 rounded-xl shadow-sm flex flex-col justify-center items-center text-[11px] transition-all">
+          <button id="btn-masin-sort" onclick="toggleMasinSort()" class="bg-violet-50 hover:bg-violet-100 border border-violet-300 text-violet-700 font-bold py-2 px-2 rounded-xl shadow-sm flex flex-col justify-center items-center text-[10px] transition-all">
+            <span id="btn-masin-sort-label">🔢 마신 이득<br>순서로 정렬</span>
+          </button>
+          <button onclick="resetAllSelections()" class="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 font-bold py-2 px-1 rounded-xl shadow-sm flex flex-col justify-center items-center text-[11px] transition-all">
             <span>🔄 리셋</span>
           </button>
         </div>
@@ -1789,14 +1792,14 @@
     "condition": "コース:芝 / 指定のスキルを持っているウマ娘がいる:シンパシー"
   },
   {
-    "name": "\"강용과단",
-    "rarity": "열화의 칼\"",
-    "group": "노멀",
-    "class": 0,
-    "masin": "고유",
-    "pt": 0.26,
-    "masin/pt": 200,
-    "condition": 0
+    "name": "강용과단, 열화의 칼",
+    "rarity": "노멀",
+    "group": 0,
+    "class": "고유",
+    "masin": 0.26,
+    "pt": 200,
+    "masin/pt": 0,
+    "condition": "走行距離:40~50% / 競り合い秒数:2秒以上 / 指定距離以上のどこか:50%"
   },
   {
     "name": "사전 준비",
@@ -2953,7 +2956,8 @@
     let appSkills = [];
     let searchQuery = ""; 
     let isSortMode = false;
-    let isSavant = false; 
+    let isSavant = false;
+    let isMasinSortMode = false;
 
     window.addEventListener('DOMContentLoaded', () => {
       if (MY_JSON_DATABASE && MY_JSON_DATABASE.length > 0) {
@@ -3011,6 +3015,10 @@
                s.class.toLowerCase().includes(searchQuery) ||
                s.rarity.toLowerCase().includes(searchQuery);
       });
+
+      if (isMasinSortMode) {
+        filtered.sort((a, b) => b.masin - a.masin);
+      }
 
       if (filtered.length === 0) {
         container.innerHTML = `<div class="text-center text-gray-400 py-16 text-xs">일치하는 스킬이 없습니다.</div>`;
@@ -3095,6 +3103,20 @@
         btn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl shadow-lg flex justify-center items-center gap-2 text-xs transition-all";
       }
       processCalculation();
+    }
+
+    function toggleMasinSort() {
+      isMasinSortMode = !isMasinSortMode;
+      const btn = document.getElementById('btn-masin-sort');
+      const label = document.getElementById('btn-masin-sort-label');
+      if (isMasinSortMode) {
+        btn.className = "bg-violet-600 hover:bg-violet-700 border border-violet-500 text-white font-bold py-2 px-2 rounded-xl shadow-sm flex flex-col justify-center items-center text-[10px] transition-all";
+        label.textContent = "🔢 원래 순서로 되돌리기";
+      } else {
+        btn.className = "bg-violet-50 hover:bg-violet-100 border border-violet-300 text-violet-700 font-bold py-2 px-2 rounded-xl shadow-sm flex flex-col justify-center items-center text-[10px] transition-all";
+        label.textContent = "🔢 마신 이득 순서로 정렬";
+      }
+      renderPage1();
     }
 
     function getLivePtOfSkill(skill) {
