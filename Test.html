@@ -46,7 +46,6 @@
             <div class="shrink-0 flex items-center gap-1">
               <button onclick="saveSelectedSkills()" class="bg-white border border-gray-300 text-gray-700 font-bold px-1.5 py-1 rounded-lg text-[9px] hover:bg-gray-50 whitespace-nowrap">💾 저장</button>
               <button onclick="loadSelectedSkills()" class="bg-white border border-gray-300 text-gray-700 font-bold px-1.5 py-1 rounded-lg text-[9px] hover:bg-gray-50 whitespace-nowrap">📥 불러오기</button>
-              <button onclick="chooseDatabaseFolder()" class="bg-white border border-blue-300 text-blue-700 font-bold px-1.5 py-1 rounded-lg text-[9px] hover:bg-blue-50 whitespace-nowrap">📂 DB 폴더 선택</button>
             </div>
           </div>
         </div>
@@ -150,8 +149,7 @@
     // =========================================================
     // 외부 DB 연동
     // GitHub Pages 기본 경로: HTML과 같은 저장소의 ./data/*.json
-    // file://로 직접 열어 fetch가 막히는 경우에는
-    // [DB 폴더 선택] 버튼으로 실제 DB 폴더를 선택할 수 있습니다.
+    // GitHub Pages의 ./data/*.json을 자동으로 읽습니다.
     // =========================================================
     async function readJsonFile(file) {
       const text = await file.text();
@@ -279,50 +277,14 @@
         return;
       } catch (relativeError) {
         window.__dbLoadError = relativeError;
-        throw new Error('GitHub Pages용 DB를 자동으로 읽지 못했습니다. 저장소의 data 폴더에 최신 DB 파일이 있는지 확인하세요. 로컬 실행이라면 [DB 폴더 선택]을 사용할 수 있습니다.');
-      }
-    }
-
-    async function chooseDatabaseFolder() {
-      if (!window.showDirectoryPicker) {
-        alert('현재 브라우저에서는 DB 폴더 선택 기능을 지원하지 않습니다. Chrome 또는 최신 Whale/Edge에서 실행해 주세요.');
-        return;
-      }
-      try {
-        const dirHandle = await window.showDirectoryPicker({ mode: 'read' });
-        await loadDatabaseFromDirectory(dirHandle);
-        if (!Array.isArray(marginDatabase) || marginDatabase.length === 0) throw new Error('margin.json 데이터가 비어 있습니다.');
-        if (!skillDatabase || typeof skillDatabase !== 'object') throw new Error('skills.json 형식 오류');
-        if (!relationDatabase || typeof relationDatabase !== 'object') throw new Error('skill_relations.json 형식 오류');
-        if (!courseDatabase || typeof courseDatabase !== 'object') throw new Error('courses 데이터 형식 오류');
-        validateKoreanSkillNames();
-
-        populateSelectors();
-        const firstCourse = Object.keys(courseDatabase)[0];
-        if (!selectedCourseId && firstCourse) selectedCourseId = String(firstCourse);
-        document.getElementById('course-selector').value = selectedCourseId;
-        document.getElementById('style-selector').value = selectedRunningStyle;
-        await loadSelectedDataset();
-        updateDbStatus('DB 폴더 연결 완료');
-      } catch (error) {
-        if (error && error.name === 'AbortError') return;
-        console.error('[DB] 폴더 선택 오류:', error);
-        const statusEl = document.getElementById('dataset-status');
-        if (statusEl) statusEl.textContent = `DB 오류: ${error.message}`;
-        const container = document.getElementById('skill-list-container');
-        if (container) container.innerHTML = `<div class="text-center py-16 text-red-500 text-xs font-bold leading-relaxed">⚠ DB를 불러오지 못했습니다.<br><br><span class="text-gray-500 font-medium">${escapeHtml(error.message)}</span></div>`;
+        throw new Error('GitHub Pages용 DB를 자동으로 읽지 못했습니다. 저장소의 data 폴더에 최신 DB 파일이 있는지 확인하세요.');
       }
     }
 
     function updateDbStatus(prefix = 'DB 준비 완료') {
       const statusEl = document.getElementById('dataset-status');
       if (!statusEl) return;
-      const source = window.__dbSource || '외부 DB';
-      const skillCount = skillDatabase && typeof skillDatabase === 'object' ? Object.keys(skillDatabase).length : 0;
-      const relationCount = relationDatabase && typeof relationDatabase === 'object' ? Object.keys(relationDatabase).length : 0;
-      const courseCount = courseDatabase && typeof courseDatabase === 'object' ? Object.keys(courseDatabase).length : 0;
-      const marginCount = Array.isArray(marginDatabase) ? marginDatabase.length : 0;
-      statusEl.textContent = `${prefix} · margin ${marginCount.toLocaleString()}행 · 스킬 ${skillCount.toLocaleString()}개 · 관계 ${relationCount.toLocaleString()}개 · 경기장 ${courseCount}개 · ${source}`;
+      statusEl.textContent = 'DB 준비 완료';
     }
 
     function hasValidBasePt(skillId) {
@@ -348,7 +310,7 @@
         document.getElementById('course-selector').value = selectedCourseId;
         document.getElementById('style-selector').value = selectedRunningStyle;
         await loadSelectedDataset();
-        updateDbStatus(`DB 준비 완료 · ${getCourseName(selectedCourseId)} / ${RUNNING_STYLE_KO[selectedRunningStyle]}`);
+        updateDbStatus();
       } catch (error) {
         console.error('[DB] 로딩 오류:', error);
         if (container) container.innerHTML = `<div class="text-center py-16 text-red-500 text-xs font-bold leading-relaxed">⚠ DB를 불러오지 못했습니다.<br><br><span class="text-gray-500 font-medium">${escapeHtml(error.message)}</span></div>`;
