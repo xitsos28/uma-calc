@@ -1,13 +1,12 @@
-[
-  {
-    "id": "tokyo_2400",
-    "name": "도쿄 2400m",
-    "distance": 2400,
-    "source_files": [
-      "도쿄2400도주표(1).xlsx",
-      "도쿄2400선행표.xlsx",
-      "도쿄2400선입표.xlsx",
-      "도쿄2400추입표.xlsx"
-    ]
+{
+  "10606": {
+    "course_id": 10606,
+    "course_name_ko": "도쿄 2400m",
+    "course_name": "도쿄 2400m"
+  },
+  "10906": {
+    "course_id": 10906,
+    "course_name_ko": "한신 2200m",
+    "course_name": "한신 2200m"
   }
-]
+}
