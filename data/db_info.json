@@ -1,0 +1,25 @@
+{
+  "generated_at_utc": "2026-10-01T14:11:59.339441+00:00",
+  "base_url": "https://xn--gck1f423k.xn--1bvt37a.tools",
+  "id_source": "uma_skills.csv",
+  "ko_name_source": "skill_names_ko.csv",
+  "ko_name_count": 1693,
+  "requested_skill_count": 1693,
+  "skill_count": 1693,
+  "unresolved_skill_count": 0,
+  "margin_count": 4139,
+  "course_count": 3,
+  "running_styles": {
+    "runner": "逃げ",
+    "leader": "先行",
+    "betweener": "差し",
+    "chaser": "追込"
+  },
+  "test_case": {
+    "skill_id": 200024,
+    "skill_name": "左回りの鬼",
+    "course_id": 10606,
+    "running_style": "runner",
+    "enabled_only_when_id_is_in_input": true
+  }
+}

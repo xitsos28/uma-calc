@@ -16078,35 +16078,5 @@
     "evolution_to_skill_ids": [],
     "evolution_from_skill_ids": [],
     "related_skill_ids": []
-  },
-  "113201211": {
-    "upper_lower_skill_ids": [
-      101321,
-      203631,
-      113201111
-    ],
-    "evolution_to_skill_ids": [],
-    "evolution_from_skill_ids": [],
-    "related_skill_ids": []
-  },
-  "113301111": {
-    "upper_lower_skill_ids": [
-      101331,
-      202981,
-      113301211
-    ],
-    "evolution_to_skill_ids": [],
-    "evolution_from_skill_ids": [],
-    "related_skill_ids": []
-  },
-  "113301211": {
-    "upper_lower_skill_ids": [
-      101331,
-      203441,
-      113301111
-    ],
-    "evolution_to_skill_ids": [],
-    "evolution_from_skill_ids": [],
-    "related_skill_ids": []
   }
 }

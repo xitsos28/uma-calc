@@ -1,12 +1,14 @@
 {
+  "10105": {
+    "course_id": 10105,
+    "name": "삿포로 2600m"
+  },
   "10606": {
     "course_id": 10606,
-    "course_name_ko": "도쿄 2400m",
-    "course_name": "도쿄 2400m"
+    "name": "도쿄 2400m"
   },
   "10906": {
     "course_id": 10906,
-    "course_name_ko": "한신 2200m",
-    "course_name": "한신 2200m"
+    "name": "한신 2200m"
   }
 }

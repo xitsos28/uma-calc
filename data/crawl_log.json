@@ -1,0 +1,240 @@
+{
+  "generated_at_utc": "2026-10-01T14:11:59.337983+00:00",
+  "base_url": "https://xn--gck1f423k.xn--1bvt37a.tools",
+  "messages": [
+    {
+      "level": "INFO",
+      "stage": "ID_FILE",
+      "url": "uma_skills.csv",
+      "message": "입력 ID 1693개 / 중복 제거 후 1693개",
+      "skill_id": null,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "KO_NAME_FILE",
+      "url": "skill_names_ko.csv",
+      "message": "한국어 스킬명 1693개 읽음",
+      "skill_id": null,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "RESUME",
+      "url": "u_tools_db\\skills.json",
+      "message": "기존 skills.json에서 1693개 불러옴",
+      "skill_id": null,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/100801",
+      "message": "기존 데이터 사용 100/1693",
+      "skill_id": 100801,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/110711",
+      "message": "기존 데이터 사용 200/1693",
+      "skill_id": 110711,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/200193",
+      "message": "기존 데이터 사용 300/1693",
+      "skill_id": 200193,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/200681",
+      "message": "기존 데이터 사용 400/1693",
+      "skill_id": 200681,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/201221",
+      "message": "기존 데이터 사용 500/1693",
+      "skill_id": 201221,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/201701",
+      "message": "기존 데이터 사용 600/1693",
+      "skill_id": 201701,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/202452",
+      "message": "기존 데이터 사용 700/1693",
+      "skill_id": 202452,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/202993",
+      "message": "기존 데이터 사용 800/1693",
+      "skill_id": 202993,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203582",
+      "message": "기존 데이터 사용 900/1693",
+      "skill_id": 203582,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/900081",
+      "message": "기존 데이터 사용 1000/1693",
+      "skill_id": 900081,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/901191",
+      "message": "기존 데이터 사용 1100/1693",
+      "skill_id": 901191,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/920401",
+      "message": "기존 데이터 사용 1200/1693",
+      "skill_id": 920401,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/101802211",
+      "message": "기존 데이터 사용 1300/1693",
+      "skill_id": 101802211,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/103702121",
+      "message": "기존 데이터 사용 1400/1693",
+      "skill_id": 103702121,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/105802121",
+      "message": "기존 데이터 사용 1500/1693",
+      "skill_id": 105802121,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/108401111",
+      "message": "기존 데이터 사용 1600/1693",
+      "skill_id": 108401111,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "SKILL_DETAIL",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/113301211",
+      "message": "기존 데이터 사용 1693/1693",
+      "skill_id": 113301211,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "KO_NAME_MATCH",
+      "url": "",
+      "message": "한국어 스킬명 매칭 완료: 1693/1693개",
+      "skill_id": null,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "RESUME",
+      "url": "u_tools_db\\margin.json",
+      "message": "기존 margin 데이터 2871개 불러옴",
+      "skill_id": null,
+      "course_id": null,
+      "running_style": null
+    },
+    {
+      "level": "INFO",
+      "stage": "COURSE_EFFECT",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/race/courses/10105/effects/runner",
+      "message": "효과 데이터 288개 수집 (고유=R 기준 / 일반=표시 스킬 ID 기준)",
+      "skill_id": null,
+      "course_id": 10105,
+      "running_style": "runner"
+    },
+    {
+      "level": "INFO",
+      "stage": "COURSE_EFFECT",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/race/courses/10105/effects/leader",
+      "message": "효과 데이터 336개 수집 (고유=R 기준 / 일반=표시 스킬 ID 기준)",
+      "skill_id": null,
+      "course_id": 10105,
+      "running_style": "leader"
+    },
+    {
+      "level": "INFO",
+      "stage": "COURSE_EFFECT",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/race/courses/10105/effects/betweener",
+      "message": "효과 데이터 329개 수집 (고유=R 기준 / 일반=표시 스킬 ID 기준)",
+      "skill_id": null,
+      "course_id": 10105,
+      "running_style": "betweener"
+    },
+    {
+      "level": "INFO",
+      "stage": "COURSE_EFFECT",
+      "url": "https://xn--gck1f423k.xn--1bvt37a.tools/race/courses/10105/effects/chaser",
+      "message": "효과 데이터 315개 수집 (고유=R 기준 / 일반=표시 스킬 ID 기준)",
+      "skill_id": null,
+      "course_id": 10105,
+      "running_style": "chaser"
+    }
+  ]
+}
