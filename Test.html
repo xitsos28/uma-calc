@@ -44,8 +44,18 @@
           <div class="flex items-center gap-1 mt-1.5">
             <p id="dataset-status" class="flex-1 min-w-0 text-[10px] text-gray-500 font-semibold text-center leading-tight">DB 데이터를 불러오는 중입니다...</p>
             <div class="shrink-0 flex items-center gap-1">
-              <button onclick="saveSelectedSkills()" class="bg-white border border-gray-300 text-gray-700 font-bold px-1.5 py-1 rounded-lg text-[9px] hover:bg-gray-50 whitespace-nowrap">💾 저장</button>
-              <button onclick="loadSelectedSkills()" class="bg-white border border-gray-300 text-gray-700 font-bold px-1.5 py-1 rounded-lg text-[9px] hover:bg-gray-50 whitespace-nowrap">📥 불러오기</button>
+              <div class="flex items-center gap-0.5" title="저장 슬롯">
+                <span class="text-[8px] text-gray-400 font-bold mr-0.5">💾</span>
+                <button onclick="saveSelectedSkills(1)" class="bg-white border border-gray-300 text-gray-700 font-bold px-1.5 py-1 rounded-lg text-[9px] hover:bg-gray-50 whitespace-nowrap">1</button>
+                <button onclick="saveSelectedSkills(2)" class="bg-white border border-gray-300 text-gray-700 font-bold px-1.5 py-1 rounded-lg text-[9px] hover:bg-gray-50 whitespace-nowrap">2</button>
+                <button onclick="saveSelectedSkills(3)" class="bg-white border border-gray-300 text-gray-700 font-bold px-1.5 py-1 rounded-lg text-[9px] hover:bg-gray-50 whitespace-nowrap">3</button>
+              </div>
+              <div class="flex items-center gap-0.5" title="불러오기 슬롯">
+                <span class="text-[8px] text-gray-400 font-bold mr-0.5">📥</span>
+                <button onclick="loadSelectedSkills(1)" class="bg-white border border-gray-300 text-gray-700 font-bold px-1.5 py-1 rounded-lg text-[9px] hover:bg-gray-50 whitespace-nowrap">1</button>
+                <button onclick="loadSelectedSkills(2)" class="bg-white border border-gray-300 text-gray-700 font-bold px-1.5 py-1 rounded-lg text-[9px] hover:bg-gray-50 whitespace-nowrap">2</button>
+                <button onclick="loadSelectedSkills(3)" class="bg-white border border-gray-300 text-gray-700 font-bold px-1.5 py-1 rounded-lg text-[9px] hover:bg-gray-50 whitespace-nowrap">3</button>
+              </div>
             </div>
           </div>
         </div>
@@ -80,7 +90,7 @@
           <button onclick="closeBottomSheet()" class="text-gray-400 hover:text-white font-bold text-xs bg-gray-800 px-2.5 py-1 rounded-lg">← 추가 선택</button>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 bg-gray-800 p-2.5 rounded-xl border border-gray-700">
+        <div class="grid grid-cols-3 gap-2 bg-gray-800 p-2.5 rounded-xl border border-gray-700">
           <div>
             <label class="block text-[10px] text-gray-400 font-bold mb-0.5">내 보유 SP 입력</label>
             <input type="number" id="input-user-sp" value="1200" oninput="processCalculation()" class="w-full bg-gray-700 text-white font-extrabold px-2.5 py-1 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500 text-xs">
@@ -88,6 +98,10 @@
           <div class="text-right flex flex-col justify-center">
             <span class="text-[10px] text-gray-400 font-bold">배우고 남은 예상 SP</span>
             <span id="text-remaining-sp" class="text-sm font-black text-green-400">1200 pt</span>
+          </div>
+          <div class="text-right flex flex-col justify-center">
+            <span class="text-[10px] text-gray-400 font-bold">총 마신이득</span>
+            <span id="text-total-masin" class="text-sm font-black text-yellow-300">-</span>
           </div>
         </div>
 
@@ -804,18 +818,11 @@
 
       const filtered = appSkills.filter(s => {
         if (!searchQuery) return true;
-        const rarityRaw = String(s.rarity || '').trim().toLowerCase();
-        const rarityDisplay = getDisplayRarity(s.rarity).toLowerCase();
-        const rarityAlias =
-          rarityRaw === 'r' ? '노멀' :
-          rarityRaw === 'sr' ? '레어' :
-          '';
-
+        const displayRarity = getDisplayRarity(s.rarity).toLowerCase();
         return s.name.toLowerCase().includes(searchQuery) || 
                s.class.toLowerCase().includes(searchQuery) ||
-               rarityRaw.includes(searchQuery) ||
-               rarityDisplay.includes(searchQuery) ||
-               rarityAlias.includes(searchQuery);
+               s.rarity.toLowerCase().includes(searchQuery) ||
+               displayRarity.includes(searchQuery);
       });
 
       if (isMasinSortMode) {
@@ -866,15 +873,31 @@
       try {
         const raw = localStorage.getItem(SELECTION_STORAGE_KEY);
         if (!raw) return {};
+
         const data = JSON.parse(raw);
-        return data && typeof data === 'object' ? data : {};
+        if (!data || typeof data !== 'object') return {};
+
+        // 구버전(슬롯 없이 course__style을 바로 키로 사용)을
+        // 슬롯 1로 자동 호환합니다.
+        if (!data.slots && Object.keys(data).some(key => key.includes('__'))) {
+          return {
+            slots: {
+              "1": data
+            }
+          };
+        }
+
+        return data;
       } catch (error) {
         console.warn('[SAVE] 저장 데이터 읽기 실패:', error);
         return {};
       }
     }
 
-    function saveSelectedSkills() {
+    function saveSelectedSkills(slot = 1) {
+      slot = Number(slot);
+      if (![1, 2, 3].includes(slot)) slot = 1;
+
       if (!selectedCourseId || !selectedRunningStyle || appSkills.length === 0) {
         alert('현재 저장할 스킬 데이터가 없습니다.');
         return;
@@ -882,6 +905,10 @@
 
       try {
         const saved = readSavedSelections();
+        if (!saved.slots || typeof saved.slots !== 'object') {
+          saved.slots = {};
+        }
+
         const key = getSelectionStorageKey();
         const selected = appSkills
           .filter(skill => skill.selected)
@@ -890,7 +917,11 @@
             hint_level: Number(skill.hint_level) || 0
           }));
 
-        saved[key] = {
+        if (!saved.slots[String(slot)] || typeof saved.slots[String(slot)] !== 'object') {
+          saved.slots[String(slot)] = {};
+        }
+
+        saved.slots[String(slot)][key] = {
           course_id: String(selectedCourseId),
           running_style: String(selectedRunningStyle),
           saved_at: new Date().toISOString(),
@@ -898,7 +929,8 @@
         };
 
         localStorage.setItem(SELECTION_STORAGE_KEY, JSON.stringify(saved));
-        alert(`선택 저장 완료
+
+        alert(`선택 저장 완료 (슬롯 ${slot})
 ${selected.length}개 스킬이 브라우저에 저장되었습니다.`);
       } catch (error) {
         console.error('[SAVE] 저장 실패:', error);
@@ -907,7 +939,10 @@ ${error.message}`);
       }
     }
 
-    function loadSelectedSkills() {
+    function loadSelectedSkills(slot = 1) {
+      slot = Number(slot);
+      if (![1, 2, 3].includes(slot)) slot = 1;
+
       if (!selectedCourseId || !selectedRunningStyle || appSkills.length === 0) {
         alert('현재 불러올 스킬 데이터가 없습니다.');
         return;
@@ -915,10 +950,11 @@ ${error.message}`);
 
       try {
         const saved = readSavedSelections();
-        const data = saved[getSelectionStorageKey()];
+        const slotData = saved.slots?.[String(slot)] || {};
+        const data = slotData[getSelectionStorageKey()];
 
         if (!data || !Array.isArray(data.selected)) {
-          alert(`저장된 선택이 없습니다.
+          alert(`슬롯 ${slot}에 저장된 선택이 없습니다.
 현재 경기장/각질: ${getCourseName(selectedCourseId)} / ${RUNNING_STYLE_KO[selectedRunningStyle]}`);
           return;
         }
@@ -951,7 +987,8 @@ ${error.message}`);
 
         renderPage1();
         updateSelectedCount();
-        alert(`선택 불러오기 완료
+        processCalculation();
+        alert(`선택 불러오기 완료 (슬롯 ${slot})
 ${restored}개 스킬을 복원했습니다.`);
       } catch (error) {
         console.error('[SAVE] 불러오기 실패:', error);
@@ -1021,6 +1058,18 @@ ${error.message}`);
         label.textContent = "🔢 마신 이득 순서로 정렬";
       }
       renderPage1();
+    }
+
+    function updateTotalMasinGain(value = null) {
+      const el = document.getElementById('text-total-masin');
+      if (!el) return;
+
+      if (value === null || !Number.isFinite(Number(value))) {
+        el.innerText = '-';
+        return;
+      }
+
+      el.innerText = `${Number(value).toFixed(2)}`;
     }
 
     function getLivePtOfSkill(skill) {
@@ -1116,6 +1165,7 @@ ${error.message}`);
         const selectedSkills = appSkills.filter(s => s.selected);
         if (selectedSkills.length === 0) {
           container.innerHTML = `<div class="text-center text-gray-400 py-16 text-xs">선택된 스킬이 없습니다.</div>`;
+          updateTotalMasinGain(null);
           return;
         }
 
@@ -1172,6 +1222,7 @@ ${error.message}`);
 
           const remain = document.getElementById('text-remaining-sp');
           if (remain) remain.innerText = `${userSpPool} pt`;
+          updateTotalMasinGain(null);
           return;
         }
 
@@ -1452,6 +1503,21 @@ ${error.message}`);
 
         const remain = document.getElementById('text-remaining-sp');
         if (remain) remain.innerText = `${userSpPool} pt`;
+
+        // 최종 추천 결과에서 실제로 추천 가능한(구매 가능한) 스킬들의
+        // 표시 마신이득을 모두 합산합니다.
+        if (isSortMode) {
+          const totalMasinGain = calculationList.reduce((sum, skill) => {
+            return sum + (
+              skill.isAffordable && !skill.isPrerequisiteBlocked
+                ? (Number(skill.masin) || 0)
+                : 0
+            );
+          }, 0);
+          updateTotalMasinGain(totalMasinGain);
+        } else {
+          updateTotalMasinGain(null);
+        }
       } catch (error) {
         console.error('[CALC] 계산 오류:', error);
         // 계산 오류가 나도 선택 스킬 화면 자체는 사라지지 않도록 원본 선택 목록을 복구합니다.
