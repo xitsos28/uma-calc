@@ -471,6 +471,15 @@
     // 우선순위: SSR > SR > R
     // 같은 rarity가 여러 개 연결된 경우에는 기본 스킬 PT가 높은 쪽을 상위로 봅니다.
     // (예: R 90 -> R 110 관계라면 R 110을 상위/대표로 사용)
+    // 화면에 표시할 명칭만 변경합니다.
+    // 내부 rarity 값(R/SR/SSR)은 계산 로직에서 그대로 사용합니다.
+    function getDisplayRarity(rarity) {
+      const value = String(rarity || '').trim();
+      if (value === 'R') return '노멀';
+      if (value === 'SR') return '레어';
+      return value;
+    }
+
     function getRarityRank(skill) {
       if (!skill) return 0;
       const master = getSkillMaster(skill.skill_id);
@@ -823,7 +832,7 @@
               <span class="w-1.5 h-1.5 rounded-full ${skill.selected ? 'bg-blue-600' : 'bg-gray-300'}"></span>
               <h3 class="font-extrabold ${skill.selected ? 'text-blue-900' : 'text-gray-900'} truncate">${escapeHtml(skill.name)}</h3>
             </div>
-            <span class="px-1.5 py-0.5 text-[9px] rounded font-bold ${labelColor}">${escapeHtml(skill.class)}·${escapeHtml(skill.rarity)}</span>
+            <span class="px-1.5 py-0.5 text-[9px] rounded font-bold ${labelColor}">${escapeHtml(skill.class)}·${escapeHtml(getDisplayRarity(skill.rarity))}</span>
           </div>
           <div class="flex justify-between items-center text-[10px] ${skill.selected ? 'text-blue-700/80' : 'text-gray-500'} mt-0.5 px-3">
             <span>비용: <strong class="font-bold">${skill.base_pt} pt</strong></span>
@@ -1127,7 +1136,7 @@ ${error.message}`);
                   <div class="flex items-center gap-1 flex-wrap">
                     <span class="text-[9px] bg-gray-700 text-gray-400 px-1 py-0.2 rounded font-black shrink-0">세팅중</span>
                     <h4 class="font-bold text-gray-100 text-xs truncate">${escapeHtml(skill.name)}</h4>
-                    <span class="text-[8px] bg-blue-500/30 text-blue-200 px-1 rounded">${escapeHtml(skill.rarity)}</span>
+                    <span class="text-[8px] bg-blue-500/30 text-blue-200 px-1 rounded">${escapeHtml(getDisplayRarity(skill.rarity))}</span>
                   </div>
                   <p class="text-[10px] text-gray-400 mt-0.5">
                     📊 가성비 효율: <span class="text-yellow-400 font-extrabold text-sm">${efficiency.toFixed(2)}</span>
