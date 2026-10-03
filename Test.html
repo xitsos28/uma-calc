@@ -804,9 +804,18 @@
 
       const filtered = appSkills.filter(s => {
         if (!searchQuery) return true;
+        const rarityRaw = String(s.rarity || '').trim().toLowerCase();
+        const rarityDisplay = getDisplayRarity(s.rarity).toLowerCase();
+        const rarityAlias =
+          rarityRaw === 'r' ? '노멀' :
+          rarityRaw === 'sr' ? '레어' :
+          '';
+
         return s.name.toLowerCase().includes(searchQuery) || 
                s.class.toLowerCase().includes(searchQuery) ||
-               s.rarity.toLowerCase().includes(searchQuery);
+               rarityRaw.includes(searchQuery) ||
+               rarityDisplay.includes(searchQuery) ||
+               rarityAlias.includes(searchQuery);
       });
 
       if (isMasinSortMode) {
