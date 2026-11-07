@@ -1369,21 +1369,62 @@ ${error.message}`);
 
           const getPrerequisiteSkills = (skill) => {
             const lowerSkills = getAllLowerSkillChain(skill, [], []);
-            return [skill, ...lowerSkills.filter(lower =>
-              String(lower.skill_id) !== String(skill.skill_id)
-            )];
+
+            // 관계 DB의 계층 판정(희귀도/기본 PT)에서 누락될 수 있는
+            // 명시적인 ○ -> ◎ 하위 스킬 관계를 보완합니다.
+            // 예: 선행 직선○(130pt)을 선택한 상태에서 선행 직선◎(140pt)을
+            // 비교할 때, 선택된 ○ 스킬을 ◎의 필수 선행 스킬로 인정합니다.
+            const getSkillNameForRelation = (target) => String(
+              target?.name ||
+              target?.skill_name_ko ||
+              getSkillKoName(target?.skill_id, '') ||
+              ''
+            ).trim();
+
+            const isExplicitCircleLowerSkill = (candidate, upperSkill) => {
+              const candidateName = getSkillNameForRelation(candidate);
+              const upperName = getSkillNameForRelation(upperSkill);
+              const candidateBase = candidateName.replace(/[◎○×]/g, '').trim();
+              const upperBase = upperName.replace(/[◎○×]/g, '').trim();
+
+              return candidateName.endsWith('○') &&
+                upperName.endsWith('◎') &&
+                candidateBase.length > 0 &&
+                candidateBase === upperBase;
+            };
+
+            // 직접 관계로 연결되어 있고 실제 선택된 ○ 스킬이라면,
+            // PT/희귀도 비교 결과와 관계없이 필수 체인에 포함합니다.
+            const directRelatedIds = new Set(
+              getDirectRelatedSkillIds(skill.skill_id).map(String)
+            );
+            const selectedCircleLowerSkills = selectedSkills.filter(candidate =>
+              directRelatedIds.has(String(candidate.skill_id)) &&
+              isExplicitCircleLowerSkill(candidate, skill)
+            );
+
+            const prerequisiteMap = new Map();
+            [skill, ...lowerSkills, ...selectedCircleLowerSkills].forEach(item => {
+              const id = String(item?.skill_id ?? '');
+              if (id && id !== String(skill.skill_id)) {
+                prerequisiteMap.set(id, item);
+              }
+            });
+
+            return [skill, ...prerequisiteMap.values()];
           };
 
           calculationList.forEach(skill => {
             const source = skill.selectedMembers?.[0] || skill;
             const prerequisites = getPrerequisiteSkills(source);
 
-            // SR만 선택한 경우에는 하위 R 스킬이 이미 습득되어 있다고 간주합니다.
-            // 따라서 하위 R을 선택하지 않았더라도 SR을 추천 대상에서 제외하지 않습니다.
-            // 단, 실제로 R을 선택한 경우에는 기존처럼 선택된 R 비용을 정상 반영합니다.
-            const sourceRarityRank = getRarityRank(source);
+            // 추천 비교에서는 사용자가 선택한 상위 스킬의 하위 선행 스킬을
+            // 이미 습득한 것으로 간주합니다.
+            // 예: 선행 직선◎만 선택한 경우 선행 직선○을 별도로 선택하지 않아도
+            // 추천 대상에서 제외하지 않으며, 선택하지 않은 하위 스킬의 PT도 더하지 않습니다.
+            // 하위 스킬을 실제로 선택했다면 해당 스킬의 PT는 기존처럼 반영합니다.
             const isAssumedPrerequisite = (req) =>
-              sourceRarityRank === 2 && getRarityRank(req) === 1;
+              !selectedById.has(String(req.skill_id));
 
             const missing = prerequisites.filter(req =>
               !selectedById.has(String(req.skill_id)) &&
@@ -1393,12 +1434,11 @@ ${error.message}`);
             skill.prerequisiteSkills = prerequisites;
             skill.missingPrerequisites = missing;
             skill.assumedPrerequisites = prerequisites.filter(req =>
-              !selectedById.has(String(req.skill_id)) &&
               isAssumedPrerequisite(req)
             );
 
             // 실제 선택한 스킬만 비용에 포함합니다.
-            // SR 단독 선택 시 하위 R은 이미 찍힌 것으로 간주하므로 비용도 추가하지 않습니다.
+            // 선택하지 않은 하위 선행 스킬은 이미 습득한 것으로 간주해 비용을 추가하지 않습니다.
             skill.prerequisiteCost = prerequisites.reduce((sum, req) => {
               const selectedReq = selectedById.get(String(req.skill_id));
               return sum + (selectedReq ? getLivePtOfSkill(selectedReq) : 0);
