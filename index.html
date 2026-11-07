@@ -1453,10 +1453,13 @@ ${error.message}`);
         // 이미 확보한 필수 체인은 다시 비용을 차감하지 않습니다.
         const committedSkillIds = new Set();
 
-        calculationList.forEach((skill, index) => {
+        // 1차 배분: 기존 가성비 순서대로 구매 가능한 스킬을 확정합니다.
+        calculationList.forEach((skill) => {
           let isAffordable = true;
           let isPrerequisiteBlocked = false;
           let requiredCost = skill.calculated_pt;
+          const availableSpAtCheck = userSpPool;
+          const newlyCommittedSkillIds = [];
 
           if (isSortMode) {
             const prerequisites = skill.prerequisiteSkills || [skill];
@@ -1478,9 +1481,11 @@ ${error.message}`);
 
               if (userSpPool >= requiredCost) {
                 isAffordable = true;
-                newRequiredSkills.forEach(req =>
-                  committedSkillIds.add(String(req.skill_id))
-                );
+                newRequiredSkills.forEach(req => {
+                  const id = String(req.skill_id);
+                  committedSkillIds.add(id);
+                  newlyCommittedSkillIds.push(id);
+                });
                 userSpPool -= requiredCost;
               } else {
                 isAffordable = false;
@@ -1494,7 +1499,85 @@ ${error.message}`);
           skill.isAffordable = isAffordable;
           skill.isPrerequisiteBlocked = isPrerequisiteBlocked;
           skill.requiredCost = requiredCost;
+          skill.availableSpAtCheck = availableSpAtCheck;
+          skill.shortfallSp = Math.max(0, requiredCost - availableSpAtCheck);
+          skill.newlyCommittedSkillIds = newlyCommittedSkillIds;
+          skill.isReplacementRecommendation = false;
+        });
 
+        // 마지막으로 구매한 스킬에 쓰인 비용과 남은 SP를 합쳐,
+        // 더 높은 마신이득을 주는 제외 스킬로 교체할 수 있는지 검사합니다.
+        if (isSortMode) {
+          let lastAffordableIndex = -1;
+          for (let i = calculationList.length - 1; i >= 0; i--) {
+            if (calculationList[i].isAffordable && !calculationList[i].isPrerequisiteBlocked) {
+              lastAffordableIndex = i;
+              break;
+            }
+          }
+
+          if (lastAffordableIndex >= 0) {
+            const selectedSkillById = new Map(
+              selectedSkills.map(s => [String(s.skill_id), s])
+            );
+            const lastSkill = calculationList[lastAffordableIndex];
+            const committedBeforeLast = new Set(committedSkillIds);
+            (lastSkill.newlyCommittedSkillIds || []).forEach(id => committedBeforeLast.delete(id));
+            const replacementBudget = userSpPool + (Number(lastSkill.requiredCost) || 0);
+
+            const replacementCandidates = calculationList
+              .map((candidate, index) => ({ candidate, index }))
+              .filter(({ candidate, index }) =>
+                index !== lastAffordableIndex &&
+                !candidate.isAffordable &&
+                !candidate.isPrerequisiteBlocked &&
+                Number(candidate.masin) > Number(lastSkill.masin)
+              )
+              .map(({ candidate, index }) => {
+                const prerequisites = candidate.prerequisiteSkills || [candidate];
+                const newRequiredSkills = prerequisites.filter(req =>
+                  !committedBeforeLast.has(String(req.skill_id))
+                );
+                const candidateCost = newRequiredSkills.reduce((sum, req) => {
+                  const selectedReq = selectedSkillById.get(String(req.skill_id));
+                  return sum + (selectedReq ? getLivePtOfSkill(selectedReq) : 0);
+                }, 0);
+                return { candidate, index, candidateCost };
+              })
+              .filter(item => item.candidateCost <= replacementBudget)
+              .sort((a, b) =>
+                (Number(b.candidate.masin) - Number(a.candidate.masin)) ||
+                (a.candidateCost - b.candidateCost) ||
+                (Number(b.candidate.efficiency) - Number(a.candidate.efficiency))
+              );
+
+            if (replacementCandidates.length > 0) {
+              const best = replacementCandidates[0];
+              const replacedSkill = lastSkill;
+              const replacementSkill = best.candidate;
+
+              replacedSkill.isAffordable = false;
+              replacedSkill.wasReplacedByHigherMasin = true;
+              replacedSkill.replacedBySkillName = replacementSkill.name;
+              replacedSkill.shortfallSp = 0;
+
+              replacementSkill.isAffordable = true;
+              replacementSkill.isReplacementRecommendation = true;
+              replacementSkill.requiredCost = best.candidateCost;
+              replacementSkill.availableSpAtCheck = replacementBudget;
+              replacementSkill.shortfallSp = 0;
+
+              // 기존 마지막 추천 위치에 대체 스킬을 배치해 추천 순위를 유지합니다.
+              calculationList[lastAffordableIndex] = replacementSkill;
+              calculationList[best.index] = replacedSkill;
+              userSpPool = replacementBudget - best.candidateCost;
+            }
+          }
+        }
+
+        // 최종 확정된 순서와 구매 가능 여부를 화면에 표시합니다.
+        calculationList.forEach((skill, index) => {
+          const isAffordable = skill.isAffordable;
           const resultCard = document.createElement('div');
           resultCard.className = `p-3 rounded-xl bg-gray-800 text-xs text-white mb-2 border ${isAffordable ? 'border-green-500' : 'border-red-500/50 opacity-60'}`;
 
@@ -1520,9 +1603,19 @@ ${error.message}`);
                     ⛔ 필수 하위 스킬 미선택: ${escapeHtml((skill.missingPrerequisites || []).map(s => s.name).join(', '))}
                   </p>
                 ` : ''}
-                ${isSortMode && !skill.isPrerequisiteBlocked && !skill.isAffordable && (skill.prerequisiteCost || 0) > 0 ? `
+                ${isSortMode && skill.wasReplacedByHigherMasin ? `
+                  <p class="text-[10px] text-amber-300 bg-amber-950/30 px-1.5 py-1 rounded mt-1 border border-amber-700/30 font-bold">
+                    ↪ ${escapeHtml(skill.replacedBySkillName)} 스킬이 더 높은 마신이득을 제공하여 교체됨
+                  </p>
+                ` : ''}
+                ${isSortMode && skill.isReplacementRecommendation ? `
+                  <p class="text-[10px] text-green-300 bg-green-950/30 px-1.5 py-1 rounded mt-1 border border-green-700/30 font-bold">
+                    ★ 남은 SP 활용: 마지막 추천 스킬보다 마신이득이 높아 교체 추천
+                  </p>
+                ` : ''}
+                ${isSortMode && !skill.isPrerequisiteBlocked && !skill.isAffordable && skill.shortfallSp > 0 ? `
                   <p class="text-[10px] text-red-300 bg-red-950/30 px-1.5 py-1 rounded mt-1 border border-red-700/30 font-bold">
-                    ⛔ 필수 체인 비용 부족: ${skill.prerequisiteCost}pt 필요
+                    ⛔ 추가 SP 부족: 이번 체인 ${skill.requiredCost}pt 필요 / 잔여 ${skill.availableSpAtCheck}pt ( ${skill.shortfallSp}pt 부족 )
                   </p>
                 ` : ''}
               </div>
