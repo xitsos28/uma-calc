@@ -8855,6 +8855,83 @@
     },
     "skill_name_ko": "따라간 핏줄, 싹트는 미래"
   },
+  "101131": {
+    "skill_id": 101131,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/101131",
+    "name_jp": "ホップステップ・ゲッチュ♡",
+    "name_kana": null,
+    "description": "レース前半のコーナーで好位置だと速度が上がる、2200mのレースなら上げ続ける",
+    "category": "固有",
+    "rarity": "SSR（★★★）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      ".css-1l6e05h{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:1em;height:1em;display:inline-block;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;fill:currentColor;font-size:inherit;}",
+      "リグヒ条件",
+      "2位 ~ 6位",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "順位割合",
+      "20~50%",
+      "走行距離",
+      "50%以内",
+      "レースの距離",
+      "2200m",
+      "コーナー",
+      "-",
+      "OR"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.35,
+        "raw_value": "0.35[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 6.0,
+        "raw_value": "6秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      },
+      {
+        "name": "OR",
+        "value": 5.0,
+        "raw_value": "5秒 × レース距離/1000"
+      }
+    ],
+    "duration": "6秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "なし",
+    "popularity_bonus": [
+      "60（スピード）"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        901131,
+        111301111,
+        111301211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "Hop step・Get you♡"
+  },
   "101151": {
     "skill_id": 101151,
     "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/101151",
@@ -14940,6 +15017,149 @@
     },
     "skill_name_ko": "푹신 보들 아워"
   },
+  "110881": {
+    "skill_id": 110881,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/110881",
+    "name_jp": "夏雷カスケード！",
+    "name_kana": null,
+    "description": "レース中盤始めに追い抜くと少しの間すごく前に出る中距離レースなら少しの間ものすごく前に出る＜作戦・差し＞",
+    "category": "固有",
+    "rarity": "SSR（★★★）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "作戦",
+      "差し",
+      "対象フェーズ前半",
+      "中盤",
+      "レースの距離",
+      "中距離",
+      "順位を上げたとき",
+      "-",
+      "OR"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.55,
+        "raw_value": "0.55[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 4.0,
+        "raw_value": "4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      },
+      {
+        "name": "OR",
+        "value": 0.45,
+        "raw_value": "0.45[m/s]"
+      }
+    ],
+    "duration": "4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "なし",
+    "popularity_bonus": [
+      "60（パワー）"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        910881,
+        108802111,
+        108802211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "여름 벼락 캐스케이드!"
+  },
+  "110891": {
+    "skill_id": 110891,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/110891",
+    "name_jp": "Tidebreaker",
+    "name_kana": null,
+    "description": "レース中間付近で中団だと長めに速度を少し上げ続け、持久力を回復する3000m未満のレースなら持久力を回復せず長めに速度を上げ続ける＜長距離＞",
+    "category": "固有",
+    "rarity": "SSR（★★★）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      ".css-1l6e05h{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:1em;height:1em;display:inline-block;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;fill:currentColor;font-size:inherit;}",
+      "リグヒ条件",
+      "2位 ~ 8位",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "レースの距離",
+      "3000mより短い",
+      "走行距離",
+      "40~50%",
+      "順位割合",
+      "20~70%",
+      "OR",
+      "長距離"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.35,
+        "raw_value": "0.35[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 7.0,
+        "raw_value": "7秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      },
+      {
+        "name": "OR",
+        "value": 0.25,
+        "raw_value": "0.25[m/s]"
+      },
+      {
+        "name": "持久力",
+        "value": 5.5,
+        "raw_value": "5.5% 回復"
+      }
+    ],
+    "duration": "7秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "なし",
+    "popularity_bonus": [
+      "30（スピード）、30（スタミナ）"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        910891,
+        108902111,
+        108902211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "Tidebreaker"
+  },
   "110981": {
     "skill_id": 110981,
     "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/110981",
@@ -15282,6 +15502,78 @@
       "related_skill_ids": []
     },
     "skill_name_ko": "Romantic Horizon"
+  },
+  "111091": {
+    "skill_id": 111091,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/111091",
+    "name_jp": "ずっとずっと輝いて",
+    "name_kana": null,
+    "description": "トリプルティアラのコースだと終盤以降のコーナーで少しの間少し前に出るさらにそこが下り坂なら加速力がわずかに上がる",
+    "category": "固有",
+    "rarity": "SSR（★★★）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "レース場",
+      "阪神レース場",
+      "レースの距離",
+      "1600m",
+      "OR",
+      "京都レース場",
+      "2000m",
+      "東京レース場",
+      "2400m",
+      "＋",
+      "コース",
+      "芝",
+      "フェーズ",
+      "終盤以降",
+      "坂",
+      "下り坂",
+      "コーナー",
+      "-"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.25,
+        "raw_value": "0.25[m/s]"
+      },
+      {
+        "name": "加速度",
+        "value": 0.2,
+        "raw_value": "0.2[m/s²]"
+      },
+      {
+        "name": "継続時間",
+        "value": 4.0,
+        "raw_value": "4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "なし",
+    "popularity_bonus": [
+      "60（パワー）"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        911091,
+        110902111,
+        110902211,
+        92111091
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "계속 계속 반짝여서"
   },
   "111101": {
     "skill_id": 111101,
@@ -54877,6 +55169,706 @@
     },
     "skill_name_ko": "부단한 단련"
   },
+  "203691": {
+    "skill_id": 203691,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203691",
+    "name_jp": "ハイパーハイテンション☆",
+    "name_kana": null,
+    "description": "憧れの先輩の勝利に興奮してよく眠れず全ての基礎能力がわずかに下がり掛かりやすくなる",
+    "category": "パッシブ",
+    "rarity": "R",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "条件なし",
+      "-"
+    ],
+    "effects": [
+      {
+        "name": "かかりやすさ",
+        "value": 40.0,
+        "raw_value": "40%"
+      },
+      {
+        "name": "全基礎能力上昇",
+        "value": -20.0,
+        "raw_value": "-20"
+      }
+    ],
+    "duration": "-",
+    "cooldown": "-",
+    "wisdom_check": "なし",
+    "popularity_bonus": [
+      "-15（スピード）、-15（スタミナ）"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "하이퍼 하이 텐션☆"
+  },
+  "203702": {
+    "skill_id": 203702,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203702",
+    "name_jp": "思い切り",
+    "name_kana": null,
+    "description": "レース終盤始めのどこかで余力十分ならわずかに前に出る＜先行・長距離＞",
+    "category": "終盤",
+    "rarity": "R",
+    "pt": 160,
+    "conditions": [
+      "発動条件",
+      "レースの距離",
+      "長距離",
+      "作戦",
+      "先行",
+      "対象フェーズ前半のどこか",
+      "終盤",
+      "ラストスパート",
+      "最速"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.15,
+        "raw_value": "0.15[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 3.0,
+        "raw_value": "3秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "3秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "20（パワー）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [
+        203701
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "거침없이"
+  },
+  "203711": {
+    "skill_id": 203711,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203711",
+    "name_jp": "ショーダウン",
+    "name_kana": null,
+    "description": "直線でラストスパートの最中なら加速力が上がる＜作戦・先行＞",
+    "category": "終盤",
+    "rarity": "SR",
+    "pt": 180,
+    "conditions": [
+      "発動条件",
+      "作戦",
+      "先行",
+      "ラストスパート",
+      "-",
+      "コーナーではない"
+    ],
+    "effects": [
+      {
+        "name": "加速度",
+        "value": 0.4,
+        "raw_value": "0.4[m/s²]"
+      },
+      {
+        "name": "継続時間",
+        "value": 0.9,
+        "raw_value": "0.9秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "0.9秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（パワー）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [
+        203712,
+        108902211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "쇼다운"
+  },
+  "203712": {
+    "skill_id": 203712,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203712",
+    "name_jp": "勇気の一歩",
+    "name_kana": null,
+    "description": "直線でラストスパートの最中なら加速力がわずかに上がる＜作戦・先行＞",
+    "category": "終盤",
+    "rarity": "R",
+    "pt": 180,
+    "conditions": [
+      "発動条件",
+      "作戦",
+      "先行",
+      "ラストスパート",
+      "-",
+      "コーナーではない"
+    ],
+    "effects": [
+      {
+        "name": "加速度",
+        "value": 0.2,
+        "raw_value": "0.2[m/s²]"
+      },
+      {
+        "name": "継続時間",
+        "value": 0.9,
+        "raw_value": "0.9秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "0.9秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "20（パワー）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [
+        203711
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "용기 있는 한 걸음"
+  },
+  "203721": {
+    "skill_id": 203721,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203721",
+    "name_jp": "この手に掴んだ未来",
+    "name_kana": null,
+    "description": "受け継がれてきた強い想いを胸に抱いてレース後半のどこかで前に出て持久力をわずかに回復する＜マイル/中距離＞",
+    "category": "特定条件",
+    "rarity": "SR",
+    "pt": 360,
+    "conditions": [
+      "発動条件",
+      "レースの距離",
+      "マイル",
+      "指定距離以上のどこか",
+      "50%",
+      "OR",
+      "中距離"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.35,
+        "raw_value": "0.35[m/s]"
+      },
+      {
+        "name": "持久力",
+        "value": 1.5,
+        "raw_value": "1.5% 回復"
+      },
+      {
+        "name": "継続時間",
+        "value": 3.0,
+        "raw_value": "3秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "3秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "30（スタミナ）、30（パワー）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [
+        110902111
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "이 손으로 잡은 미래"
+  },
+  "203731": {
+    "skill_id": 203731,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203731",
+    "name_jp": "エネルギッシュ",
+    "name_kana": null,
+    "description": "レース中盤始めのどこかで速度が少し上がり持久力を少し回復する＜長距離＞",
+    "category": "中盤",
+    "rarity": "SR",
+    "pt": 200,
+    "conditions": [
+      "発動条件",
+      "レースの距離",
+      "長距離",
+      "対象フェーズ前半のどこか",
+      "中盤"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.25,
+        "raw_value": "0.25[m/s]"
+      },
+      {
+        "name": "持久力",
+        "value": 3.5,
+        "raw_value": "3.5% 回復"
+      },
+      {
+        "name": "継続時間",
+        "value": 3.0,
+        "raw_value": "3秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "3秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "30（スピード）、30（スタミナ）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [
+        203732,
+        107703111
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "에네르기슈"
+  },
+  "203732": {
+    "skill_id": 203732,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203732",
+    "name_jp": "張り切り",
+    "name_kana": null,
+    "description": "レース中盤始めのどこかで速度がちょっと上がり持久力をちょっと回復する＜長距離＞",
+    "category": "中盤",
+    "rarity": "R",
+    "pt": 200,
+    "conditions": [
+      "発動条件",
+      "レースの距離",
+      "長距離",
+      "対象フェーズ前半のどこか",
+      "中盤"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.05,
+        "raw_value": "0.05[m/s]"
+      },
+      {
+        "name": "持久力",
+        "value": 0.5,
+        "raw_value": "0.5% 回復"
+      },
+      {
+        "name": "継続時間",
+        "value": 3.0,
+        "raw_value": "3秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "3秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "10（スピード）、10（スタミナ）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [
+        203731
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "넘치는 의욕"
+  },
+  "203741": {
+    "skill_id": 203741,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203741",
+    "name_jp": "刹那の勝機",
+    "name_kana": null,
+    "description": "レース後半のコーナーで追い抜くと前に出る＜差し・中距離＞",
+    "category": "特定条件",
+    "rarity": "SR",
+    "pt": 160,
+    "conditions": [
+      "発動条件",
+      "レースの距離",
+      "中距離",
+      "作戦",
+      "差し",
+      "走行距離",
+      "50%以降",
+      "順位を上げたとき",
+      "-",
+      "コーナー"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.35,
+        "raw_value": "0.35[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 2.4,
+        "raw_value": "2.4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "2.4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（パワー）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [
+        203742,
+        108802211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "찰나의 승기"
+  },
+  "203742": {
+    "skill_id": 203742,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203742",
+    "name_jp": "間隙を突いて",
+    "name_kana": null,
+    "description": "レース後半のコーナーで追い抜くとわずかに前に出る＜差し・中距離＞",
+    "category": "特定条件",
+    "rarity": "R",
+    "pt": 160,
+    "conditions": [
+      "発動条件",
+      "レースの距離",
+      "中距離",
+      "作戦",
+      "差し",
+      "走行距離",
+      "50%以降",
+      "順位を上げたとき",
+      "-",
+      "コーナー"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.15,
+        "raw_value": "0.15[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 2.4,
+        "raw_value": "2.4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "2.4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "20（パワー）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [
+        203741
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "틈새 공략"
+  },
+  "203751": {
+    "skill_id": 203751,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203751",
+    "name_jp": "残影",
+    "name_kana": null,
+    "description": "レース中盤のどこかで速度が上がる＜作戦・追込＞",
+    "category": "中盤",
+    "rarity": "SR",
+    "pt": 140,
+    "conditions": [
+      "発動条件",
+      "作戦",
+      "追込",
+      "対象フェーズのどこか",
+      "中盤"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.35,
+        "raw_value": "0.35[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 1.8,
+        "raw_value": "1.8秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "1.8秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（スピード）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [
+        203752
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "잔영"
+  },
+  "203752": {
+    "skill_id": 203752,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203752",
+    "name_jp": "影を追って",
+    "name_kana": null,
+    "description": "レース中盤のどこかで速度がわずかに上がる＜作戦・追込＞",
+    "category": "中盤",
+    "rarity": "R",
+    "pt": 140,
+    "conditions": [
+      "発動条件",
+      "作戦",
+      "追込",
+      "対象フェーズのどこか",
+      "中盤"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.15,
+        "raw_value": "0.15[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 1.8,
+        "raw_value": "1.8秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "1.8秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "20（スピード）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [
+        203751
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "그림자를 쫓아서"
+  },
+  "203762": {
+    "skill_id": 203762,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203762",
+    "name_jp": "追駆",
+    "name_kana": null,
+    "description": "レース最終盤始めのどこかでラストスパートの最中なら速度がわずかに上がる＜作戦・追込＞",
+    "category": "終盤",
+    "rarity": "R",
+    "pt": 180,
+    "conditions": [
+      "発動条件",
+      "作戦",
+      "追込",
+      "ラストスパート",
+      "-",
+      "対象フェーズ前半のどこか"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.15,
+        "raw_value": "0.15[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 3.0,
+        "raw_value": "3秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "3秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "20（スピード）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [
+        203761
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "뒤쫓기"
+  },
+  "203772": {
+    "skill_id": 203772,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/203772",
+    "name_jp": "臆せぬ心",
+    "name_kana": null,
+    "description": "レース中盤のどこかで速度がわずかに上がる＜長距離＞",
+    "category": "中盤",
+    "rarity": "R",
+    "pt": 160,
+    "conditions": [
+      "発動条件",
+      "対象フェーズのどこか",
+      "中盤",
+      "レースの距離",
+      "長距離"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.15,
+        "raw_value": "0.15[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 2.4,
+        "raw_value": "2.4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "2.4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "20（スピード）"
+    ],
+    "acquisition": [
+      "取得方法"
+    ],
+    "relations": {
+      "upper_lower_skill_ids": [],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "주눅 들지 않는 마음"
+  },
   "210011": {
     "skill_id": 210011,
     "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/210011",
@@ -66168,6 +67160,81 @@
     },
     "skill_name_ko": "따라간 핏줄, 싹트는 미래"
   },
+  "901131": {
+    "skill_id": 901131,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/901131",
+    "name_jp": "<継承>ホップステップ・ゲッチュ♡",
+    "name_kana": null,
+    "description": "レース前半のコーナーで好位置だと速度がわずかに上がる、2200mのレースならわずかに上げ続ける",
+    "category": "固有",
+    "rarity": "R",
+    "pt": 200,
+    "conditions": [
+      "発動条件",
+      ".css-1l6e05h{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:1em;height:1em;display:inline-block;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;fill:currentColor;font-size:inherit;}",
+      "リグヒ条件",
+      "2位 ~ 6位",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "順位割合",
+      "20~50%",
+      "走行距離",
+      "50%以内",
+      "レースの距離",
+      "2200m",
+      "コーナー",
+      "-",
+      "OR"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.15,
+        "raw_value": "0.15[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 3.6,
+        "raw_value": "3.6秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      },
+      {
+        "name": "OR",
+        "value": 3.0,
+        "raw_value": "3秒 × レース距離/1000"
+      }
+    ],
+    "duration": "3.6秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "15（スピード）"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        101131
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "Hop step・Get you♡"
+  },
   "901151": {
     "skill_id": 901151,
     "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/901151",
@@ -71915,6 +72982,130 @@
     },
     "skill_name_ko": "푹신 보들 아워"
   },
+  "910881": {
+    "skill_id": 910881,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/910881",
+    "name_jp": "<継承>夏雷カスケード！",
+    "name_kana": null,
+    "description": "レース中盤始めに追い抜くと少しの間少し前に出る＜作戦・差し＞",
+    "category": "固有",
+    "rarity": "R",
+    "pt": 200,
+    "conditions": [
+      "発動条件",
+      "作戦",
+      "差し",
+      "対象フェーズ前半",
+      "中盤",
+      "順位を上げたとき",
+      "-"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.25,
+        "raw_value": "0.25[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 2.4,
+        "raw_value": "2.4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "2.4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "15（パワー）"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        110881
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "여름 벼락 캐스케이드!"
+  },
+  "910891": {
+    "skill_id": 910891,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/910891",
+    "name_jp": "<継承>Tidebreaker",
+    "name_kana": null,
+    "description": "レース中間付近で中団だと長めに速度をちょっと上げ続け、持久力をわずかに回復する＜長距離＞",
+    "category": "固有",
+    "rarity": "R",
+    "pt": 200,
+    "conditions": [
+      "発動条件",
+      ".css-1l6e05h{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:1em;height:1em;display:inline-block;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;fill:currentColor;font-size:inherit;}",
+      "リグヒ条件",
+      "2位 ~ 8位",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "レースの距離",
+      "長距離",
+      "走行距離",
+      "40~50%",
+      "順位割合",
+      "20~70%"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.05,
+        "raw_value": "0.05[m/s]"
+      },
+      {
+        "name": "持久力",
+        "value": 1.5,
+        "raw_value": "1.5% 回復"
+      },
+      {
+        "name": "継続時間",
+        "value": 4.2,
+        "raw_value": "4.2秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "4.2秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "7（スピード）、7（スタミナ）"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        110891
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "Tidebreaker"
+  },
   "910981": {
     "skill_id": 910981,
     "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/910981",
@@ -72234,6 +73425,69 @@
       "related_skill_ids": []
     },
     "skill_name_ko": "Romantic Horizon"
+  },
+  "911091": {
+    "skill_id": 911091,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/911091",
+    "name_jp": "<継承>ずっとずっと輝いて",
+    "name_kana": null,
+    "description": "トリプルティアラのコースだと終盤以降のコーナーで少しの間ちょっと前に出る",
+    "category": "固有",
+    "rarity": "R",
+    "pt": 200,
+    "conditions": [
+      "発動条件",
+      "レース場",
+      "阪神レース場",
+      "レースの距離",
+      "1600m",
+      "OR",
+      "京都レース場",
+      "2000m",
+      "東京レース場",
+      "2400m",
+      "＋",
+      "コース",
+      "芝",
+      "フェーズ",
+      "終盤以降",
+      "コーナー",
+      "-"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.05,
+        "raw_value": "0.05[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 2.4,
+        "raw_value": "2.4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "2.4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "15（パワー）"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        111091,
+        92111091
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "계속 계속 반짝여서"
   },
   "911101": {
     "skill_id": 911101,
@@ -73763,6 +75017,75 @@
       "related_skill_ids": []
     },
     "skill_name_ko": "모두의 나에게!"
+  },
+  "92111091": {
+    "skill_id": 92111091,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/92111091",
+    "name_jp": "ずっとずっと輝いて",
+    "name_kana": null,
+    "description": "トリプルティアラのコースだと終盤以降のコーナーで少しの間わずかに前に出るさらにそこが下り坂なら加速力がちょっと上がる",
+    "category": "固有",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "レース場",
+      "阪神レース場",
+      "レースの距離",
+      "1600m",
+      "OR",
+      "京都レース場",
+      "2000m",
+      "東京レース場",
+      "2400m",
+      "＋",
+      "コース",
+      "芝",
+      "フェーズ",
+      "終盤以降",
+      "坂",
+      "下り坂",
+      "コーナー",
+      "-"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.15,
+        "raw_value": "0.15[m/s]"
+      },
+      {
+        "name": "加速度",
+        "value": 0.1,
+        "raw_value": "0.1[m/s²]"
+      },
+      {
+        "name": "継続時間",
+        "value": 2.4,
+        "raw_value": "2.4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "2.4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "15（パワー）"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        911091
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "계속 계속 반짝여서"
   },
   "100101111": {
     "skill_id": 100101111,
@@ -76929,6 +78252,90 @@
     },
     "skill_name_ko": "말괄량이 여왕"
   },
+  "100902121": {
+    "skill_id": 100902121,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/100902121",
+    "name_jp": "緋色の光となって",
+    "name_kana": null,
+    "description": "レース中盤が迫ったどこかで前方だと速度が上がる、その後ラストスパートの最中なら加速力がわずかに上がる＜逃げ・長距離＞",
+    "category": "序盤",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      ".css-1l6e05h{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:1em;height:1em;display:inline-block;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;fill:currentColor;font-size:inherit;}",
+      "リグヒ条件",
+      "1位 ~ 6位",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "作戦",
+      "逃げ",
+      "レースの距離",
+      "長距離",
+      "対象フェーズ後半のどこか",
+      "序盤",
+      "順位割合",
+      "50%以上",
+      "AFTER",
+      "他効果を発動済",
+      "-",
+      "ラストスパート"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.35,
+        "raw_value": "0.35[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 2.4,
+        "raw_value": "2.4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      },
+      {
+        "name": "加速度",
+        "value": 0.2,
+        "raw_value": "0.2[m/s²]"
+      }
+    ],
+    "duration": "2.4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "30（スピード）、30（パワー）",
+      "取得条件1",
+      "基礎能力[賢さ]が800以上になる",
+      "取得条件2"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        110091,
+        201281,
+        100902111,
+        100902211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "다홍색 빛이 되어"
+  },
   "100902211": {
     "skill_id": 100902211,
     "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/100902211",
@@ -77994,6 +79401,69 @@
       "related_skill_ids": []
     },
     "skill_name_ko": "투혼입도!"
+  },
+  "101202221": {
+    "skill_id": 101202221,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/101202221",
+    "name_jp": "誓いの一振り",
+    "name_kana": null,
+    "description": "レース終盤始めのどこかで加速力が上がり少し前に出る＜追込・中距離＞",
+    "category": "終盤",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "レースの距離",
+      "中距離",
+      "作戦",
+      "追込",
+      "対象フェーズ前半のどこか",
+      "終盤"
+    ],
+    "effects": [
+      {
+        "name": "加速度",
+        "value": 0.4,
+        "raw_value": "0.4[m/s²]"
+      },
+      {
+        "name": "即時速度上昇",
+        "value": 0.25,
+        "raw_value": "0.25[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 1.2,
+        "raw_value": "1.2秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "1.2秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（パワー）",
+      "取得条件1",
+      "育成ウマ娘とのお出かけを1回以上行う」または「友人タイプまたはグループタイプとのお出かけを1回以上行う",
+      "取得条件2"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        110121,
+        202491,
+        101202111,
+        101202211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "맹세의 스윙"
   },
   "101301111": {
     "skill_id": 101301111,
@@ -82764,6 +84234,60 @@
       "related_skill_ids": []
     },
     "skill_name_ko": "지고의 승리를 맛보시길"
+  },
+  "102702221": {
+    "skill_id": 102702221,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/102702221",
+    "name_jp": "踏み出す勇気をご覧あれ",
+    "name_kana": null,
+    "description": "いずれかの下り坂のどこかでしばらくの間速度が上がる",
+    "category": "特定条件",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "どこかの下り坂",
+      "-"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.35,
+        "raw_value": "0.35[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 4.0,
+        "raw_value": "4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（スピード）",
+      "取得条件1",
+      "育成イベント「グイグイ貴族大会」を発生させる」または「基礎能力[賢さ]が800以上になる",
+      "取得条件2"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        110271,
+        202171,
+        102702111,
+        102702211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "내딛는 용기를 보라"
   },
   "102801111": {
     "skill_id": 102801111,
@@ -100100,6 +101624,133 @@
     },
     "skill_name_ko": "밀리언 카드"
   },
+  "108802111": {
+    "skill_id": 108802111,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/108802111",
+    "name_jp": "煌めきのイリュージョン",
+    "name_kana": null,
+    "description": "レース後半に追い抜こうとするとしばらくの間前に出る＜差し・中距離＞",
+    "category": "特定条件",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "レースの距離",
+      "中距離",
+      "作戦",
+      "差し",
+      "走行距離",
+      "50%以降",
+      "追い越し状態",
+      "-"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.35,
+        "raw_value": "0.35[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 4.0,
+        "raw_value": "4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（パワー）",
+      "取得条件1",
+      "＜差し＞のスキルを3個以上所持する」または「基礎能力[パワー]が800以上になる",
+      "取得条件2"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        110881,
+        202471,
+        108802211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "찬란한 일루전"
+  },
+  "108802211": {
+    "skill_id": 108802211,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/108802211",
+    "name_jp": "波上のラストトリック",
+    "name_kana": null,
+    "description": "レース後半のコーナーで追い抜くとすごく前に出る賢さが十二分に高いとものすごく前に出る＜差し・中距離＞",
+    "category": "特定条件",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "レースの距離",
+      "中距離",
+      "作戦",
+      "差し",
+      "走行距離",
+      "50%以降",
+      "賢さ",
+      "1200以上",
+      "順位を上げたとき",
+      "-",
+      "コーナー",
+      "OR"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.55,
+        "raw_value": "0.55[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 2.4,
+        "raw_value": "2.4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      },
+      {
+        "name": "OR",
+        "value": 0.45,
+        "raw_value": "0.45[m/s]"
+      }
+    ],
+    "duration": "2.4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（パワー）",
+      "取得条件1",
+      "育成イベント「重ねて、紡いで」を発生させる」または「速度が上がるスキルを3個以上所持する",
+      "取得条件2"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        110881,
+        203741,
+        108802111
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "파도 위의 라스트 트릭"
+  },
   "108901111": {
     "skill_id": 108901111,
     "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/108901111",
@@ -100235,6 +101886,126 @@
       "related_skill_ids": []
     },
     "skill_name_ko": "전력투구"
+  },
+  "108902111": {
+    "skill_id": 108902111,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/108902111",
+    "name_jp": "マリンブルー・ライナー",
+    "name_kana": null,
+    "description": "レース中盤のどこかでしばらくの間速度が上がる＜先行・長距離＞",
+    "category": "中盤",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "対象フェーズのどこか",
+      "中盤",
+      "作戦",
+      "先行",
+      "レースの距離",
+      "長距離"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.35,
+        "raw_value": "0.35[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 4.0,
+        "raw_value": "4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（スピード）",
+      "取得条件1",
+      "長距離レースを2勝以上する」または「＜長距離＞のスキルを2個以上所持する",
+      "取得条件2"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        110891,
+        202761,
+        108902211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "마린 블루・라이너"
+  },
+  "108902211": {
+    "skill_id": 108902211,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/108902211",
+    "name_jp": "いつもの僕じゃないから！",
+    "name_kana": null,
+    "description": "直線でラストスパートの最中なら加速力がすごく上がりわずかに前に出る＜先行・長距離＞",
+    "category": "終盤",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "レースの距離",
+      "長距離",
+      "作戦",
+      "先行",
+      "ラストスパート",
+      "-",
+      "コーナーではない"
+    ],
+    "effects": [
+      {
+        "name": "加速度",
+        "value": 0.5,
+        "raw_value": "0.5[m/s²]"
+      },
+      {
+        "name": "即時速度上昇",
+        "value": 0.15,
+        "raw_value": "0.15[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 0.9,
+        "raw_value": "0.9秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "0.9秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（パワー）",
+      "取得条件1",
+      "「切れ者」を持つ状態で育成を完了する」または「＜先行＞のスキルを2個以上所持する",
+      "取得条件2"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        110891,
+        203711,
+        108902111
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "평소의 내가 아니니까!"
   },
   "109001111": {
     "skill_id": 109001111,
@@ -101855,6 +103626,69 @@
     },
     "skill_name_ko": "Triumph"
   },
+  "110201221": {
+    "skill_id": 110201221,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/110201221",
+    "name_jp": "エスプロズィオーネ",
+    "name_kana": null,
+    "description": "レース終盤が迫ったどこかで持久力を使ってしばらくの間速度が上がる＜差し・長距離＞",
+    "category": "中盤",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "作戦",
+      "差し",
+      "レースの距離",
+      "長距離",
+      "対象フェーズ後半のどこか",
+      "中盤"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.35,
+        "raw_value": "0.35[m/s]"
+      },
+      {
+        "name": "持久力",
+        "value": 3.0,
+        "raw_value": "3% 消耗"
+      },
+      {
+        "name": "継続時間",
+        "value": 4.0,
+        "raw_value": "4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（スピード）",
+      "取得条件1",
+      "長距離のGⅠを2勝以上する",
+      "取得条件2"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        101021,
+        202541,
+        110201111,
+        110201211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "Esplosione"
+  },
   "110401111": {
     "skill_id": 110401111,
     "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/110401111",
@@ -103137,6 +104971,122 @@
     },
     "skill_name_ko": "절~대로 질 수 없어!"
   },
+  "110902111": {
+    "skill_id": 110902111,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/110902111",
+    "name_jp": "希望は巡る、何度でも",
+    "name_kana": null,
+    "description": "受け継がれてきた強い想いを胸に抱いてレース後半のどこかですごく前に出て持久力を少し回復する＜マイル/中距離＞",
+    "category": "特定条件",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "レースの距離",
+      "マイル",
+      "指定距離以上のどこか",
+      "50%",
+      "OR",
+      "中距離"
+    ],
+    "effects": [
+      {
+        "name": "即時速度上昇",
+        "value": 0.45,
+        "raw_value": "0.45[m/s]"
+      },
+      {
+        "name": "持久力",
+        "value": 3.5,
+        "raw_value": "3.5% 回復"
+      },
+      {
+        "name": "継続時間",
+        "value": 3.0,
+        "raw_value": "3秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "3秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "30（スタミナ）、30（パワー）",
+      "取得条件1",
+      "桜花賞、オークス、秋華賞を勝利する」または「基礎能力[スピード]が800以上になる"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        111091,
+        203721,
+        110902211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "희망은 순환한다, 끊임없이"
+  },
+  "110902211": {
+    "skill_id": 110902211,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/110902211",
+    "name_jp": "ティアラ・ダイブ！",
+    "name_kana": null,
+    "description": "いずれかの下り坂のどこかで加速力が上がる＜作戦・先行＞",
+    "category": "特定条件",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      "作戦",
+      "先行",
+      "どこかの下り坂",
+      "-"
+    ],
+    "effects": [
+      {
+        "name": "加速度",
+        "value": 0.4,
+        "raw_value": "0.4[m/s²]"
+      },
+      {
+        "name": "継続時間",
+        "value": 3.0,
+        "raw_value": "3秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "3秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（パワー）",
+      "取得条件1",
+      "育成イベント「夢の紡ぎ」を発生させる」または「＜先行＞のスキルを2個以上所持する",
+      "取得条件2"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        111091,
+        201341,
+        110902111
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "티아라・다이브!"
+  },
   "111001111": {
     "skill_id": 111001111,
     "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/111001111",
@@ -103531,6 +105481,166 @@
       "related_skill_ids": []
     },
     "skill_name_ko": "견실한 비책"
+  },
+  "111301111": {
+    "skill_id": 111301111,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/111301111",
+    "name_jp": "ラブミー☆パレード",
+    "name_kana": null,
+    "description": "レース中盤のどこかで前方だと速度がすごく上がる、2200mのレースならものすごく上がる＜中距離＞",
+    "category": "中盤",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      ".css-1l6e05h{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:1em;height:1em;display:inline-block;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;fill:currentColor;font-size:inherit;}",
+      "リグヒ条件",
+      "1位 ~ 6位",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "レースの距離",
+      "2200m",
+      "対象フェーズのどこか",
+      "中盤",
+      "順位割合",
+      "50%以上",
+      "OR",
+      "中距離"
+    ],
+    "effects": [
+      {
+        "name": "目標速度",
+        "value": 0.55,
+        "raw_value": "0.55[m/s]"
+      },
+      {
+        "name": "継続時間",
+        "value": 2.4,
+        "raw_value": "2.4秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      },
+      {
+        "name": "OR",
+        "value": 0.45,
+        "raw_value": "0.45[m/s]"
+      }
+    ],
+    "duration": "2.4秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（スピード）",
+      "取得条件1",
+      "育成イベント「あと1枚？もう1枚！」を発生させる」または「速度が上がるスキルを3個以上所持する",
+      "取得条件2"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        101131,
+        200721,
+        111301211
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "러브 미☆퍼레이드"
+  },
+  "111301211": {
+    "skill_id": 111301211,
+    "url": "https://xn--gck1f423k.xn--1bvt37a.tools/skills/111301211",
+    "name_jp": "ぜーったい譲って♡",
+    "name_kana": null,
+    "description": "終盤始めのどこかで前方だと加速力がすごく上がる、2200mのレースなら終盤始めの早めのどこかで持久力を少し使ってすごく上がる＜先行・中距離＞",
+    "category": "終盤",
+    "rarity": "SSR（進化）",
+    "pt": null,
+    "conditions": [
+      "発動条件",
+      ".css-1l6e05h{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:1em;height:1em;display:inline-block;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;fill:currentColor;font-size:inherit;}",
+      "リグヒ条件",
+      "1位 ~ 6位",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "作戦",
+      "先行",
+      "レースの距離",
+      "2200m",
+      "順位割合",
+      "50%以上",
+      "対象フェーズ25%のどこか",
+      "終盤",
+      "OR",
+      "2200以外",
+      "対象フェーズ前半のどこか"
+    ],
+    "effects": [
+      {
+        "name": "加速度",
+        "value": 0.5,
+        "raw_value": "0.5[m/s²]"
+      },
+      {
+        "name": "持久力",
+        "value": 2.0,
+        "raw_value": "2% 消耗"
+      },
+      {
+        "name": "継続時間",
+        "value": 1.8,
+        "raw_value": "1.8秒 × レース距離/1000"
+      },
+      {
+        "name": "クールダウン",
+        "value": 500.0,
+        "raw_value": "500秒 × レース距離/1000"
+      }
+    ],
+    "duration": "1.8秒 × レース距離/1000",
+    "cooldown": "500秒 × レース距離/1000",
+    "wisdom_check": "あり",
+    "popularity_bonus": [
+      "60（パワー）",
+      "取得条件1",
+      "GⅠを5勝以上する」または「＜中距離＞のスキルを4個以上所持する"
+    ],
+    "acquisition": [],
+    "relations": {
+      "upper_lower_skill_ids": [
+        101131,
+        201901,
+        111301111
+      ],
+      "evolution_to_skill_ids": [],
+      "evolution_from_skill_ids": [],
+      "related_skill_ids": []
+    },
+    "skill_name_ko": "그냥~ 양보해 주라♡"
   },
   "111501111": {
     "skill_id": 111501111,

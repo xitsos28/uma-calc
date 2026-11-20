@@ -1335,6 +1335,16 @@
     "evolution_from_skill_ids": [],
     "related_skill_ids": []
   },
+  "101131": {
+    "upper_lower_skill_ids": [
+      901131,
+      111301111,
+      111301211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
   "101151": {
     "upper_lower_skill_ids": [
       901151,
@@ -2212,6 +2222,26 @@
     "evolution_from_skill_ids": [],
     "related_skill_ids": []
   },
+  "110881": {
+    "upper_lower_skill_ids": [
+      910881,
+      108802111,
+      108802211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "110891": {
+    "upper_lower_skill_ids": [
+      910891,
+      108902111,
+      108902211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
   "110981": {
     "upper_lower_skill_ids": [
       910981,
@@ -2258,6 +2288,17 @@
       911071,
       110702111,
       110702211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "111091": {
+    "upper_lower_skill_ids": [
+      911091,
+      110902111,
+      110902211,
+      92111091
     ],
     "evolution_to_skill_ids": [],
     "evolution_from_skill_ids": [],
@@ -8714,6 +8755,109 @@
     "evolution_from_skill_ids": [],
     "related_skill_ids": []
   },
+  "203691": {
+    "upper_lower_skill_ids": [],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203702": {
+    "upper_lower_skill_ids": [
+      203701
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203711": {
+    "upper_lower_skill_ids": [
+      203712,
+      108902211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203712": {
+    "upper_lower_skill_ids": [
+      203711
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203721": {
+    "upper_lower_skill_ids": [
+      110902111
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203731": {
+    "upper_lower_skill_ids": [
+      203732,
+      107703111
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203732": {
+    "upper_lower_skill_ids": [
+      203731
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203741": {
+    "upper_lower_skill_ids": [
+      203742,
+      108802211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203742": {
+    "upper_lower_skill_ids": [
+      203741
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203751": {
+    "upper_lower_skill_ids": [
+      203752
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203752": {
+    "upper_lower_skill_ids": [
+      203751
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203762": {
+    "upper_lower_skill_ids": [
+      203761
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "203772": {
+    "upper_lower_skill_ids": [],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
   "210011": {
     "upper_lower_skill_ids": [
       210012
@@ -10135,6 +10279,14 @@
     "evolution_from_skill_ids": [],
     "related_skill_ids": []
   },
+  "901131": {
+    "upper_lower_skill_ids": [
+      101131
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
   "901151": {
     "upper_lower_skill_ids": [
       101151
@@ -10807,6 +10959,22 @@
     "evolution_from_skill_ids": [],
     "related_skill_ids": []
   },
+  "910881": {
+    "upper_lower_skill_ids": [
+      110881
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "910891": {
+    "upper_lower_skill_ids": [
+      110891
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
   "910981": {
     "upper_lower_skill_ids": [
       110981
@@ -10842,6 +11010,15 @@
   "911071": {
     "upper_lower_skill_ids": [
       111071
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "911091": {
+    "upper_lower_skill_ids": [
+      111091,
+      92111091
     ],
     "evolution_to_skill_ids": [],
     "evolution_from_skill_ids": [],
@@ -11018,6 +11195,14 @@
   "920681": {
     "upper_lower_skill_ids": [
       120681
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "92111091": {
+    "upper_lower_skill_ids": [
+      911091
     ],
     "evolution_to_skill_ids": [],
     "evolution_from_skill_ids": [],
@@ -11542,6 +11727,17 @@
     "evolution_from_skill_ids": [],
     "related_skill_ids": []
   },
+  "100902121": {
+    "upper_lower_skill_ids": [
+      110091,
+      201281,
+      100902111,
+      100902211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
   "100902211": {
     "upper_lower_skill_ids": [
       110091,
@@ -11703,6 +11899,17 @@
       202491,
       101202111,
       101202221
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "101202221": {
+    "upper_lower_skill_ids": [
+      110121,
+      202491,
+      101202111,
+      101202211
     ],
     "evolution_to_skill_ids": [],
     "evolution_from_skill_ids": [],
@@ -12505,6 +12712,17 @@
       202171,
       102702111,
       102702221
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "102702221": {
+    "upper_lower_skill_ids": [
+      110271,
+      202171,
+      102702111,
+      102702211
     ],
     "evolution_to_skill_ids": [],
     "evolution_from_skill_ids": [],
@@ -15319,6 +15537,26 @@
     "evolution_from_skill_ids": [],
     "related_skill_ids": []
   },
+  "108802111": {
+    "upper_lower_skill_ids": [
+      110881,
+      202471,
+      108802211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "108802211": {
+    "upper_lower_skill_ids": [
+      110881,
+      203741,
+      108802111
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
   "108901111": {
     "upper_lower_skill_ids": [
       100891,
@@ -15334,6 +15572,26 @@
       100891,
       200511,
       108901111
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "108902111": {
+    "upper_lower_skill_ids": [
+      110891,
+      202761,
+      108902211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "108902211": {
+    "upper_lower_skill_ids": [
+      110891,
+      203711,
+      108902111
     ],
     "evolution_to_skill_ids": [],
     "evolution_from_skill_ids": [],
@@ -15604,6 +15862,17 @@
     "evolution_from_skill_ids": [],
     "related_skill_ids": []
   },
+  "110201221": {
+    "upper_lower_skill_ids": [
+      101021,
+      202541,
+      110201111,
+      110201211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
   "110401111": {
     "upper_lower_skill_ids": [
       101041,
@@ -15799,6 +16068,26 @@
     "evolution_from_skill_ids": [],
     "related_skill_ids": []
   },
+  "110902111": {
+    "upper_lower_skill_ids": [
+      111091,
+      203721,
+      110902211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "110902211": {
+    "upper_lower_skill_ids": [
+      111091,
+      201341,
+      110902111
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
   "111001111": {
     "upper_lower_skill_ids": [
       101101,
@@ -15854,6 +16143,26 @@
       101111,
       203331,
       111101111
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "111301111": {
+    "upper_lower_skill_ids": [
+      101131,
+      200721,
+      111301211
+    ],
+    "evolution_to_skill_ids": [],
+    "evolution_from_skill_ids": [],
+    "related_skill_ids": []
+  },
+  "111301211": {
+    "upper_lower_skill_ids": [
+      101131,
+      201901,
+      111301111
     ],
     "evolution_to_skill_ids": [],
     "evolution_from_skill_ids": [],
